@@ -39,4 +39,4 @@ execute_raw_binary() {
   qemu-system-x86_64 -drive format=raw,file=$1 
 }
 
-export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.cargo/bin:/usr/local/sbin:$PATH"
