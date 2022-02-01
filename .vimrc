@@ -28,7 +28,7 @@ noremap † :!ctags -R .<cr><cr>
 " fails. Therefore, I'm using 'Ï' instead.
 " autocmd BufRead,BufNewFile *.c,*.cpp,*.h,*.hh,*.hpp*.m,*.mm setlocal equalprg=clang-format
 " autocmd BufRead,BufNewFile *.sh setlocal equalprg=shfmt
-noremap <silent> Ï :call Format()<cr>
+noremap <silent>  :call Format()<cr>
 function! Format()
     " Save the file, pass it to clang-format
     let extension = expand('%:e')
@@ -46,11 +46,13 @@ function! Format()
     elseif extension == "sh"
         w | w !shfmt > fmttmp.tmp
         if (v:shell_error)
-            echo "Error"
+            echo "Failed to format shell script."
         else
+            echo "Shell script formatted successfully."
             !cat fmttmp.tmp > %
             :retab
         endif
+        !rm fmttmp.tmp
     elseif extension == "rs"
         w | w !rustfmt %
     endif
