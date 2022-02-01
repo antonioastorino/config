@@ -10,6 +10,7 @@ set tags=tags
 set autoindent
 set number relativenumber
 set nu rnu
+highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
 set smartindent
 set tabstop=4
 set shiftwidth=4
