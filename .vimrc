@@ -21,7 +21,11 @@ let &t_ti.="\e[1 q"
 let &t_SI.="\e[5 q"
 let &t_EI.="\e[1 q"
 let &t_te.="\e[0 q"
-noremap † :!ctags -R .<cr><cr> 
+command Tags execute ":call MakeTags()"
+function! MakeTags()
+    silent !ctags -R .
+    :redraw!
+endfunction
 
 " Formatters
 " Not sure how to set up autocmd to make it :retab and not overwite when shfmt
@@ -49,8 +53,9 @@ function! Format()
             echo "Failed to format shell script."
         else
             echo "Shell script formatted successfully."
-            !cat fmttmp.tmp > %
+            silent !cat fmttmp.tmp > %
             :retab
+            :redraw!
         endif
         !rm fmttmp.tmp
     elseif extension == "rs"
