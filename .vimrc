@@ -33,7 +33,7 @@ endfunction
 " fails. Therefore, I'm using 'Ï' instead.
 " autocmd BufRead,BufNewFile *.c,*.cpp,*.h,*.hh,*.hpp*.m,*.mm setlocal equalprg=clang-format
 " autocmd BufRead,BufNewFile *.sh setlocal equalprg=shfmt
-noremap <silent>  :call Format()<cr>
+noremap  :call Format()<CR>
 function! Format()
     " Save the file, pass it to clang-format
     let extension = expand('%:e')
@@ -51,14 +51,13 @@ function! Format()
     elseif extension == "sh"
         w | w !shfmt > fmttmp.tmp
         if (v:shell_error)
-            echo "Failed to format shell script."
+            !echo "Failed to format shell script."
         else
-            echo "Shell script formatted successfully."
             silent !cat fmttmp.tmp > %
             :retab
-            :redraw!
         endif
-        !rm fmttmp.tmp
+        silent !rm fmttmp.tmp
+        :redraw!
     elseif extension == "rs"
         w | w !rustfmt %
     endif
