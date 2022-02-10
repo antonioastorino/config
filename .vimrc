@@ -62,4 +62,5 @@ function! Format()
         w | w !rustfmt %
     endif
 endfunction
-
+" Format on save
+autocmd BufWritePost <buffer> call Format()
