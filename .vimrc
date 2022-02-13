@@ -13,11 +13,15 @@ set nu rnu
 highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
 set smartindent
 set tabstop=4
+set softtabstop=4
 set shiftwidth=4
 set expandtab
 set t_Co=256
 set autoread
 set showmatch
+
+autocmd BufNewFile,BufRead *.ino setlocal tabstop=2 shiftwidth=2 softtabstop=2
+
 let &t_ti.="\e[1 q"
 let &t_SI.="\e[5 q"
 let &t_EI.="\e[1 q"
@@ -89,4 +93,4 @@ function! Format()
     endif
 endfunction
 " Format on save
-autocmd BufWritePost <buffer> call Format()
+autocmd BufWritePost * call Format()
