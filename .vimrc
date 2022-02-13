@@ -44,10 +44,36 @@ function! Format()
         \"mm",
         \"h",
         \"hh",
-        \"hpp"
+        \"hpp",
+        \"ino"
         \]
     if index(clang_list, extension) >= 0
-        w | w !clang-format > %
+        if extension == "ino"
+            let $format_style = "{IndentWidth: 2}"
+        else
+            let $format_style =
+                \"{"
+                \."BasedOnStyle: LLVM,"
+                \."IndentWidth: 4,"
+                \."DerivePointerAlignment: false,"
+                \."PointerAlignment: Left,"
+                \."AlignConsecutiveAssignments: true,"
+                \."BinPackArguments: false,"
+                \."BinPackParameters: false,"
+                \."ExperimentalAutoDetectBinPacking: false,"
+                \."AllowAllParametersOfDeclarationOnNextLine: false,"
+                \."AllowShortIfStatementsOnASingleLine: false,"
+                \."AllowShortBlocksOnASingleLine: false,"
+                \."AllowShortLoopsOnASingleLine: false,"
+                \."ColumnLimit: 100,"
+                \."AccessModifierOffset: -4,"
+                \."ConstructorInitializerAllOnOneLineOrOnePerLine: true,"
+                \."BreakBeforeBinaryOperators: All,"
+                \."BreakBeforeBraces: Allman,"
+                \."UseTab: Never"
+                \."}"
+        endif
+        w | w !clang-format --style=$format_style > %
     elseif extension == "sh"
         w | w !shfmt > fmttmp.tmp
         if (v:shell_error)
