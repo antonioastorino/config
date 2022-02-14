@@ -32,6 +32,14 @@ function! MakeTags()
     :redraw!
 endfunction
 
+" Netrw configuration
+let g:netrw_banner = 0
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_liststyle = 3
+let g:netrw_list_hide = netrw_gitignore#Hide()
+let g:netrw_list_hide = '^\./$,^\.\./$'
+
 " Formatters
 " Not sure how to set up autocmd to make it :retab and not overwite when shfmt
 " fails. Therefore, I'm using 'Ï' instead.
