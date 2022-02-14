@@ -20,13 +20,13 @@ set t_Co=256
 set autoread
 set showmatch
 
-autocmd BufNewFile,BufRead *.ino setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd BufNewFile,BufRead *.ino,*.sh setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 let &t_ti.="\e[1 q"
 let &t_SI.="\e[5 q"
 let &t_EI.="\e[1 q"
 let &t_te.="\e[0 q"
-command Tags execute ":call MakeTags()"
+command! Tags execute ":call MakeTags()"
 function! MakeTags()
     silent !ctags -R .
     :redraw!
@@ -39,6 +39,7 @@ let g:netrw_altv = 1
 let g:netrw_liststyle = 3
 let g:netrw_list_hide = netrw_gitignore#Hide()
 let g:netrw_list_hide = '^\./$,^\.\./$'
+let g:netrw_winsize = 30
 
 " Formatters
 " Not sure how to set up autocmd to make it :retab and not overwite when shfmt
@@ -46,21 +47,61 @@ let g:netrw_list_hide = '^\./$,^\.\./$'
 " autocmd BufRead,BufNewFile *.c,*.cpp,*.h,*.hh,*.hpp*.m,*.mm setlocal equalprg=clang-format
 " autocmd BufRead,BufNewFile *.sh setlocal equalprg=shfmt
 noremap  :call Format()<CR>
+" Alt+X
+noremap ≈ :call Comment("yes")<cr>
+" Alt+Shift+X
+noremap ˛ :call Comment("no")<cr>
+
+let s:clang_list = [
+    \"c",
+    \"cpp",
+    \"m",
+    \"mm",
+    \"h",
+    \"hh",
+    \"hpp",
+    \"ino"
+    \]
+
+function! Comment(yes_no)
+    let l:extension = expand('%:e')
+    let s:pattern = ''
+    if index(s:clang_list, l:extension) >= 0
+        let s:pattern = '\/\/'
+    endif
+    if (s:pattern == '')
+        :echo "File extension ".l:extension." not supported yet"
+        return
+    endif
+    if (a:yes_no == "yes")
+        let $curr_col = col('.')
+        " Check if the line is already a comment.
+        if (col('$') == 1) " this is an empty line - skip
+            return
+        endif
+        " Remove comment if already present.
+        :call Comment("no")
+        " prepend the pattern
+        :execute 's/^/' . s:pattern . '/'
+        :call cursor(line('.'),$curr_col)
+    else
+        let $curr_col = col('.')
+        try
+            :execute 's/^\s*' . s:pattern . '//'
+            " the following line is execute only if the pattern removal does
+            " not fail
+            :call cursor(line('.'),$curr_col)
+        catch
+            " do nothing
+        endtry
+    endif
+endfunction
+
 function! Format()
+    let l:extension = expand('%:e')
     " Save the file, pass it to clang-format
-    let extension = expand('%:e')
-    let clang_list = [
-        \"c",
-        \"cpp",
-        \"m",
-        \"mm",
-        \"h",
-        \"hh",
-        \"hpp",
-        \"ino"
-        \]
-    if index(clang_list, extension) >= 0
-        if extension == "ino"
+    if index(s:clang_list, l:extension) >= 0
+        if l:extension == "ino"
             let $format_style = "{IndentWidth: 2}"
         else
             let $format_style =
@@ -85,9 +126,9 @@ function! Format()
                 \."UseTab: Never"
                 \."}"
         endif
-        w | w !clang-format --style=$format_style > %
-    elseif extension == "sh"
-        w | w !shfmt > fmttmp.tmp
+        silent! w | w !clang-format --style=$format_style > %
+    elseif l:extension == "sh"
+        w | w !shfmt -i 4 > fmttmp.tmp
         if (v:shell_error)
             !echo "Failed to format shell script."
         else
@@ -96,7 +137,7 @@ function! Format()
         endif
         silent !rm fmttmp.tmp
         :redraw!
-    elseif extension == "rs"
+    elseif l:extension == "rs"
         w | w !rustfmt %
     endif
 endfunction
