@@ -68,6 +68,8 @@ function! Comment(yes_no)
     let s:pattern = ''
     if index(s:clang_list, l:extension) >= 0
         let s:pattern = '\/\/'
+    elseif l:extension == "sh"
+        let s:pattern = "#"
     endif
     if (s:pattern == '')
         :echo "File extension ".l:extension." not supported yet"
