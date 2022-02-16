@@ -1,16 +1,15 @@
 " Resource: https://www.youtube.com/watch?v=XA2WjJbmmoM&ab_channel=thoughtbot
+so ~/config/mapping.vim
+
 set nocompatible
 syntax enable
 filetype plugin on
 set path+=**
 set wildmenu
 set tags=tags
-
-"
 set autoindent
 set number relativenumber
 set nu rnu
-highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
 set smartindent
 set tabstop=4
 set softtabstop=4
@@ -19,18 +18,6 @@ set expandtab
 set t_Co=256
 set autoread
 set showmatch
-
-autocmd BufNewFile,BufRead *.ino,*.sh setlocal tabstop=2 shiftwidth=2 softtabstop=2
-
-let &t_ti.="\e[1 q"
-let &t_SI.="\e[5 q"
-let &t_EI.="\e[1 q"
-let &t_te.="\e[0 q"
-command! Tags execute ":call MakeTags()"
-function! MakeTags()
-    silent !ctags -R .
-    :redraw!
-endfunction
 
 " Netrw configuration
 let g:netrw_banner = 0
@@ -41,29 +28,27 @@ let g:netrw_list_hide = netrw_gitignore#Hide()
 let g:netrw_list_hide = '^\./$,^\.\./$'
 let g:netrw_winsize = 30
 
+highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
+autocmd BufNewFile,BufRead *.ino setlocal tabstop=2 shiftwidth=2 softtabstop=2
+
+let &t_ti.="\e[1 q"
+let &t_SI.="\e[5 q"
+let &t_EI.="\e[1 q"
+let &t_te.="\e[0 q"
+let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
+
+command! Tags execute ":call MakeTags()"
+function! MakeTags()
+    silent !ctags -R .
+    :redraw!
+endfunction
+
 " Formatters
 " Not sure how to set up autocmd to make it :retab and not overwite when shfmt
 " fails. Therefore, I'm using 'Ï' instead.
 " autocmd BufRead,BufNewFile *.c,*.cpp,*.h,*.hh,*.hpp*.m,*.mm setlocal equalprg=clang-format
 " autocmd BufRead,BufNewFile *.sh setlocal equalprg=shfmt
-noremap  :call Format()<CR>
-" Alt+X
-noremap ≈ :call Comment("yes")<cr>
-" Alt+Shift+X
-noremap ˛ :call Comment("no")<cr>
-
-let s:clang_list = [
-    \"c",
-    \"cpp",
-    \"m",
-    \"mm",
-    \"h",
-    \"hh",
-    \"hpp",
-    \"ino"
-    \]
-
-function! Comment(yes_no)
+function! Comment()
     let l:extension = expand('%:e')
     let s:pattern = ''
     if index(s:clang_list, l:extension) >= 0
@@ -75,28 +60,18 @@ function! Comment(yes_no)
         :echo "File extension ".l:extension." not supported yet"
         return
     endif
-    if (a:yes_no == "yes")
-        let $curr_col = col('.')
-        " Check if the line is already a comment.
-        if (col('$') == 1) " this is an empty line - skip
-            return
-        endif
-        " Remove comment if already present.
-        :call Comment("no")
-        " prepend the pattern
-        :execute 's/^/' . s:pattern . '/'
-        :call cursor(line('.'),$curr_col)
-    else
-        let $curr_col = col('.')
-        try
-            :execute 's/^\s*' . s:pattern . '//'
-            " the following line is execute only if the pattern removal does
-            " not fail
-            :call cursor(line('.'),$curr_col)
-        catch
-            " do nothing
-        endtry
+    if (col('$') == 1) " this is an empty line - skip
+        return
     endif
+    execute "norm! mb"
+    try
+        " Try to uncomment
+        :execute 's/^\s*' . s:pattern . '//'
+    catch
+        " Uncommenting failed - comment
+        :execute 's/^/' . s:pattern . '/'
+    endtry
+    execute "norm! `b"
 endfunction
 
 function! Format()
