@@ -1,24 +1,12 @@
-" Resource: https://www.youtube.com/watch?v=XA2WjJbmmoM&ab_channel=thoughtbot
+" Resource:
+" https://www.youtube.com/watch?v=XA2WjJbmmoM&ab_channel=thoughtbot
+" https://stackoverflow.com/questions/45502128/vim-spell-highlighting
 so ~/config/mapping.vim
+so ~/config/settings.vim
 
 set nocompatible
 syntax enable
 filetype plugin on
-set path+=**
-set wildmenu
-set tags=tags
-set autoindent
-set number relativenumber
-set nu rnu
-set smartindent
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-set t_Co=256
-set autoread
-set showmatch
-
 " Netrw configuration
 let g:netrw_banner = 0
 let g:netrw_browse_split = 4
