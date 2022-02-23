@@ -21,3 +21,10 @@ nnoremap <leader><leader>w :w<cr>
 nnoremap <leader><leader>q :q<cr>
 nnoremap <leader>wq :wq<cr>
 
+" Git
+nnoremap <leader>gd :call GitDiff()<cr>
+nnoremap <leader>hp :call ToggleHunkPreview()<cr>
+
+" Tags
+nnoremap <leader><leader>t :call MakeTags()<cr>
+

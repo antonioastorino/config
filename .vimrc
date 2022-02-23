@@ -1,41 +1,18 @@
 " Resource:
 " https://www.youtube.com/watch?v=XA2WjJbmmoM&ab_channel=thoughtbot
 " https://stackoverflow.com/questions/45502128/vim-spell-highlighting
+set nocompatible
+
 so ~/config/mapping.vim
 so ~/config/settings.vim
 
-set nocompatible
-syntax enable
-filetype plugin on
-" Netrw configuration
-let g:netrw_banner = 0
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
-let g:netrw_liststyle = 3
-let g:netrw_list_hide = netrw_gitignore#Hide()
-let g:netrw_list_hide = '^\./$,^\.\./$'
-let g:netrw_winsize = 30
-
-highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
 autocmd BufNewFile,BufRead *.ino setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
-let &t_ti.="\e[1 q"
-let &t_SI.="\e[5 q"
-let &t_EI.="\e[1 q"
-let &t_te.="\e[0 q"
-let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
-
-command! Tags execute ":call MakeTags()"
 function! MakeTags()
     silent !ctags -R .
     :redraw!
 endfunction
 
-" Formatters
-" Not sure how to set up autocmd to make it :retab and not overwite when shfmt
-" fails. Therefore, I'm using 'Ï' instead.
-" autocmd BufRead,BufNewFile *.c,*.cpp,*.h,*.hh,*.hpp*.m,*.mm setlocal equalprg=clang-format
-" autocmd BufRead,BufNewFile *.sh setlocal equalprg=shfmt
 function! Comment()
     let l:extension = expand('%:e')
     let s:pattern = ''
@@ -106,5 +83,18 @@ function! Format()
         w | w !rustfmt %
     endif
 endfunction
-" Format on save
-autocmd BufWritePost * call Format()
+
+function! GitDiff()
+    :silent write
+    :silent execute '!git d --color=always -- ' . expand('%:p') . ' | less --RAW-CONTROL-CHARS'
+    :redraw!
+endfunction
+
+function! ToggleHunkPreview()
+    if gitgutter#hunk#is_preview_window_open()
+        :pclose
+    else
+        GitGutterPreviewHunk
+    endif
+endfunction
+

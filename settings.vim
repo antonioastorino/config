@@ -1,3 +1,5 @@
+syntax enable
+filetype plugin on
 set path+=**
 set wildmenu
 set tags=tags
@@ -13,11 +15,18 @@ set t_Co=256
 set autoread
 set showmatch
 
+let &t_ti.="\e[1 q"
+let &t_SI.="\e[5 q"
+let &t_EI.="\e[1 q"
+let &t_te.="\e[0 q"
+let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
+
 " GitGutter
 set updatetime=100
-highlight GitGutterAdd guifg=#009900 ctermfg=Green
-highlight GitGutterChange guifg=#bbbb00 ctermfg=Yellow
-highlight GitGutterDelete guifg=#ff2222 ctermfg=Red
+highlight GitGutterAdd ctermfg=Green
+highlight GitGutterChange ctermfg=Yellow
+highlight GitGutterDelete ctermfg=Red
+highlight SignColumn ctermbg=Black
 let g:gitgutter_enabled = 1
 
 " Highlight
@@ -38,3 +47,15 @@ hi clear SpellCap
 hi SpellCap cterm=underline
 hi clear SpellLocal
 hi SpellLocal cterm=underline
+
+" Netrw configuration
+let g:netrw_banner = 0
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_liststyle = 3
+let g:netrw_list_hide = netrw_gitignore#Hide()
+let g:netrw_list_hide = '^\./$,^\.\./$'
+let g:netrw_winsize = 30
+
+highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
+
