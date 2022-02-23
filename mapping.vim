@@ -4,11 +4,9 @@ inoremap jk <esc>
 inoremap <esc> <nop>
 " After this, change split by using h/j/k/l 
 nnoremap <leader>w <esc><c-w>
-" Alt+F
-inoremap ƒ <esc>:call Format()<cr>
-nnoremap ƒ :call Format()<cr>
-" Alt+X
-noremap ≈ :call Comment()<cr>
+inoremap <c-f> <esc>:call Format()<cr>
+nnoremap <c-f> :call Format()<cr>
+noremap <c-x> :call ToggleComment()<cr>
 
 " source/modify vimrc
 nnoremap <leader>sv :so $MYVIMRC<cr>

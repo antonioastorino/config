@@ -8,12 +8,14 @@ so ~/config/settings.vim
 
 autocmd BufNewFile,BufRead *.ino setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
+let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
+
 function! MakeTags()
     silent !ctags -R .
     :redraw!
 endfunction
 
-function! Comment()
+function! ToggleComment()
     let l:extension = expand('%:e')
     let s:pattern = ''
     if index(s:clang_list, l:extension) >= 0
@@ -22,7 +24,7 @@ function! Comment()
         let s:pattern = "#"
     endif
     if (s:pattern == '')
-        :echo "File extension ".l:extension." not supported yet"
+        :echo "Cannot comment: file extension '.".l:extension."' not supported yet"
         return
     endif
     if (col('$') == 1) " this is an empty line - skip
@@ -81,6 +83,8 @@ function! Format()
         :redraw!
     elseif l:extension == "rs"
         w | w !rustfmt %
+    else
+        :echo "Cannot format: file extension '.".l:extension."' not supported yet"
     endif
 endfunction
 
