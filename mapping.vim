@@ -6,7 +6,8 @@ inoremap <esc> <nop>
 nnoremap <leader>w <esc><c-w>
 inoremap <c-f> <esc>:call Format()<cr>
 nnoremap <c-f> :call Format()<cr>
-noremap <c-x> :call ToggleComment()<cr>
+inoremap <c-x> <esc>:call ToggleComment()<cr>
+nnoremap <c-x> :call ToggleComment()<cr>
 
 " source/modify vimrc
 nnoremap <leader>sv :so $MYVIMRC<cr>

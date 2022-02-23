@@ -15,10 +15,6 @@ set t_Co=256
 set autoread
 set showmatch
 
-let &t_SI.="\e[5 q"
-let &t_SR.="\e[4 q"
-let &t_EI.="\e[1 q"
-
 " GitGutter
 set updatetime=100
 highlight GitGutterAdd ctermfg=Green
@@ -27,24 +23,33 @@ highlight GitGutterDelete ctermfg=Red
 highlight SignColumn ctermbg=Black
 let g:gitgutter_enabled = 1
 
-" Highlight
-set cursorline
-set cursorcolumn
+" Cursor
+let &t_SI.="\e[5 q"
+let &t_SR.="\e[4 q"
+let &t_EI.="\e[1 q"
 highlight CursorLine   cterm=underline ctermbg=none
 highlight CursorColumn cterm=NONE ctermbg=darkgray guibg=darkgray
 highlight Visual       ctermbg=green ctermfg=white
+autocmd VimEnter    * setlocal cursorline
+autocmd WinEnter    * setlocal cursorline
+autocmd BufWinEnter * setlocal cursorline
+autocmd WinLeave    * setlocal nocursorline
+autocmd VimEnter    * setlocal cursorcolumn
+autocmd WinEnter    * setlocal cursorcolumn
+autocmd BufWinEnter * setlocal cursorcolumn
+autocmd WinLeave    * setlocal nocursorcolumn
 
-" Enable spell checker - CamelCase is not a misspelled word
+" Spell checker - CamelCase is not a misspelled word
 set spell spelllang=en_us
 set spelloptions=camel
-hi clear SpellBad
-hi SpellBad cterm=underline
-hi clear SpellRare
-hi SpellRare cterm=underline
-hi clear SpellCap
-hi SpellCap cterm=underline
-hi clear SpellLocal
-hi SpellLocal cterm=underline
+highlight clear SpellBad
+highlight SpellBad cterm=underline
+highlight clear SpellRare
+highlight SpellRare cterm=underline
+highlight clear SpellCap
+highlight SpellCap cterm=underline
+highlight clear SpellLocal
+highlight SpellLocal cterm=underline
 
 " Netrw configuration
 let g:netrw_banner = 0
@@ -55,5 +60,5 @@ let g:netrw_list_hide = netrw_gitignore#Hide()
 let g:netrw_list_hide = '^\./$,^\.\./$'
 let g:netrw_winsize = 30
 
-highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
+highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE
 
