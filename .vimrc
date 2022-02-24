@@ -2,6 +2,7 @@
 " https://www.youtube.com/watch?v=XA2WjJbmmoM&ab_channel=thoughtbot
 " https://stackoverflow.com/questions/45502128/vim-spell-highlighting
 set nocompatible
+let mapleader = " "
 
 so ~/config/mapping.vim
 so ~/config/settings.vim

@@ -1,9 +1,8 @@
-let mapleader = " "
-
 inoremap jk <esc>
 inoremap <esc> <nop>
 " After this, change split by using h/j/k/l 
 nnoremap <leader>w <esc><c-w>
+
 inoremap <c-f> <esc>:call Format()<cr>
 nnoremap <c-f> :call Format()<cr>
 inoremap <c-x> <esc>:call ToggleComment()<cr>
@@ -26,4 +25,8 @@ nnoremap <leader>hp :call ToggleHunkPreview()<cr>
 
 " Tags
 nnoremap <leader><leader>t :call MakeTags()<cr>
+
+" Move
+nnoremap <c-j> <PageDown>
+nnoremap <c-k> <PageUp>
 
