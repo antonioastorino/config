@@ -103,3 +103,18 @@ function! ToggleHunkPreview()
     endif
 endfunction
 
+function! FindLocal()
+    let s:wordUnderCursor = expand("<cword>")
+    " Close the navicagion window if already open.
+    :cclose
+    :execute 'vimgrep /\<'.s:wordUnderCursor.'\>/g %'
+endfunction
+
+function! FindGlobal()
+    let s:wordUnderCursor = expand("<cword>")
+    :execute 'vimgrep /\<'.s:wordUnderCursor.'\>/g `git ls-files`'
+    " Open the navigation window.
+    :copen
+    " Move cursor to the window in which the search was launched.
+    :execute "norm! \<C-W>p"
+endfunction

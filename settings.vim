@@ -17,11 +17,11 @@ set showmatch
 
 " GitGutter
 set updatetime=100
-highlight GitGutterAdd ctermfg=Green
+let g:gitgutter_enabled = 1
+highlight GitGutterAdd    ctermfg=Green
 highlight GitGutterChange ctermfg=Yellow
 highlight GitGutterDelete ctermfg=Red
-highlight SignColumn ctermbg=Black
-let g:gitgutter_enabled = 1
+highlight SignColumn      ctermbg=Black
 
 " Cursor
 let &t_SI.="\e[5 q"
