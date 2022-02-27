@@ -49,27 +49,7 @@ function! Format()
         if l:extension == "ino"
             let $format_style = "{IndentWidth: 2}"
         else
-            let $format_style =
-                \"{"
-                \."BasedOnStyle: LLVM,"
-                \."IndentWidth: 4,"
-                \."DerivePointerAlignment: false,"
-                \."PointerAlignment: Left,"
-                \."AlignConsecutiveAssignments: true,"
-                \."BinPackArguments: false,"
-                \."BinPackParameters: false,"
-                \."ExperimentalAutoDetectBinPacking: false,"
-                \."AllowAllParametersOfDeclarationOnNextLine: false,"
-                \."AllowShortIfStatementsOnASingleLine: false,"
-                \."AllowShortBlocksOnASingleLine: false,"
-                \."AllowShortLoopsOnASingleLine: false,"
-                \."ColumnLimit: 100,"
-                \."AccessModifierOffset: -4,"
-                \."ConstructorInitializerAllOnOneLineOrOnePerLine: true,"
-                \."BreakBeforeBinaryOperators: All,"
-                \."BreakBeforeBraces: Allman,"
-                \."UseTab: Never"
-                \."}"
+            let $format_style = join(readfile($HOME."/config/.clang-format"))
         endif
         silent! w | w !clang-format --style=$format_style > %
     elseif l:extension == "sh"
