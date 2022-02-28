@@ -1,12 +1,16 @@
 inoremap jk <esc>
 inoremap <esc> <nop>
-" After this, change split by using h/j/k/l 
-nnoremap <leader>w <esc><c-w>
 
+" Code-specific
 inoremap <c-f> <esc>:call Format()<cr>
 nnoremap <c-f> :call Format()<cr>
 inoremap <c-x> <esc>:call ToggleComment()<cr>
 nnoremap <c-x> :call ToggleComment()<cr>
+
+" Text manipulation
+nnoremap cu maviwu`a
+nnoremap cU maviwU`a
+inoremap <c-u> <Esc>gUiw`]a
 
 " source/modify vimrc
 nnoremap <leader>sv :so $MYVIMRC<cr>
