@@ -92,7 +92,7 @@ endfunction
 
 function! FindGlobal()
     let s:wordUnderCursor = expand("<cword>")
-    :execute 'vimgrep /\<'.s:wordUnderCursor.'\>/g `git ls-files`'
+    :execute 'vimgrep /\<'.s:wordUnderCursor.'\>/g `fd -H --ignore-file .gitignore -E ".git"`'
     " Open the navigation window.
     :copen
     " Move cursor to the window in which the search was launched.
