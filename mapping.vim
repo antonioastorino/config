@@ -11,6 +11,7 @@ nnoremap <c-x> :call ToggleComment()<cr>
 nnoremap cu maviwu`a
 nnoremap cU maviwU`a
 inoremap <c-u> <Esc>gUiw`]a
+inoremap <expr> <tab> Autocomplete()
 
 " source/modify vimrc
 nnoremap <leader>sv :so $MYVIMRC<cr>
@@ -27,6 +28,8 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
 nnoremap <c-l> <c-w>l
+nnoremap <leader>j <PageDown>
+nnoremap <leader>k <PageUp>
 
 " Git
 nnoremap <leader>gd :call GitDiff()<cr>
@@ -39,5 +42,3 @@ nnoremap <leader><leader>f :call FindGlobal()<cr>
 nnoremap <leader>f :call FindLocal()<cr>
 nnoremap <leader>n :cnext<cr>
 nnoremap <leader>N :cprev<cr>
-
-

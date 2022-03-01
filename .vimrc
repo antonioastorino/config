@@ -98,3 +98,12 @@ function! FindGlobal()
     " Move cursor to the window in which the search was launched.
     :execute "norm! \<C-W>p"
 endfunction
+
+function! Autocomplete()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-n>"
+    endif
+endfunction
