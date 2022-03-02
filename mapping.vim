@@ -28,8 +28,8 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
 nnoremap <c-l> <c-w>l
-nnoremap <leader>j <PageDown>
-nnoremap <leader>k <PageUp>
+nnoremap <leader>j <PageDown>zz
+nnoremap <leader>k <PageUp>zz
 
 " Git
 nnoremap <leader>gd :call GitDiff()<cr>
