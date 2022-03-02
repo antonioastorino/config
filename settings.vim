@@ -18,9 +18,9 @@ set showmatch
 " GitGutter
 set updatetime=100
 let g:gitgutter_enabled = 1
-highlight GitGutterAdd    ctermfg=Green
-highlight GitGutterChange ctermfg=Yellow
-highlight GitGutterDelete ctermfg=Red
+highlight GitGutterAdd    ctermfg=Green  ctermbg=Blue
+highlight GitGutterChange ctermfg=Yellow ctermbg=Green
+highlight GitGutterDelete ctermfg=Red    ctermbg=Yellow
 highlight SignColumn      ctermbg=Black
 
 " Cursor
