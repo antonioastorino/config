@@ -22,6 +22,12 @@ highlight GitGutterAdd    ctermfg=Green  ctermbg=Blue
 highlight GitGutterChange ctermfg=Yellow ctermbg=Green
 highlight GitGutterDelete ctermfg=Red    ctermbg=Yellow
 highlight SignColumn      ctermbg=Black
+let g:gitgutter_sign_added              = '++'
+let g:gitgutter_sign_modified           = '~~'
+let g:gitgutter_sign_removed            = '__'
+let g:gitgutter_sign_removed_first_line = '‾‾'
+let g:gitgutter_sign_removed_above_and_below = '_¯'
+let g:gitgutter_sign_modified_removed   = '~_'
 
 " Cursor
 let &t_SI.="\e[5 q"
