@@ -24,12 +24,28 @@ nnoremap <leader>l :Lexplore<cr>
 nnoremap <leader><leader>w :w<cr>
 nnoremap <leader><leader>q :q<cr>
 nnoremap <leader>wq :wq<cr>
+inoremap <c-h> <esc><c-w>h
+inoremap <c-j> <esc><c-w>j
+inoremap <c-k> <esc><c-w>k
+inoremap <c-l> <esc><c-w>l
+
 nnoremap <c-h> <c-w>h
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
 nnoremap <c-l> <c-w>l
+
+tnoremap <c-h> <c-w>h
+tnoremap <c-j> <c-w>j
+tnoremap <c-k> <c-w>k
+tnoremap <c-l> <c-w>l
+
 nnoremap <leader>j <PageDown>zz
 nnoremap <leader>k <PageUp>zz
+
+" Terminal window
+nnoremap <silent> <c-t> :call ToggleTerminal()<CR>
+tnoremap <silent> <c-t> <C-w>N:call ToggleTerminal()<CR>
+tnoremap <c-n> <c-w>N
 
 " Git
 nnoremap <leader>gd :call GitDiff()<cr>
