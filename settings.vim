@@ -66,5 +66,11 @@ let g:netrw_list_hide = netrw_gitignore#Hide()
 let g:netrw_list_hide = '^\./$,^\.\./$'
 let g:netrw_winsize = 30
 
+" Syntax hightlight
+let g:cpp_function_highlight = 1
+let g:cpp_attributes_highlight = 1
+let g:cpp_member_highlight = 1
+let g:cpp_simple_highlight = 1
+
 highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE
 
