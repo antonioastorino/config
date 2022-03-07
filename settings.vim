@@ -1,4 +1,4 @@
-syntax enable
+syntax on
 filetype plugin on
 set path+=**
 set wildmenu
@@ -46,6 +46,7 @@ autocmd BufWinEnter * setlocal cursorcolumn
 autocmd WinLeave    * setlocal nocursorcolumn
 
 " Spell checker - CamelCase is not a misspelled word
+syntax spell toplevel
 set spell spelllang=en_us
 set spelloptions=camel
 highlight clear SpellBad
