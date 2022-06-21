@@ -1,7 +1,6 @@
 alias ll="ls -la"
 alias ldd="otool -L"
 alias vscode="open -a Visual\ Studio\ Code.app"
-alias qemu="execute_raw_binary"
 # Enable autocomplete for git
 autoload -Uz compinit && compinit
 
@@ -35,10 +34,6 @@ __prompt_command() {
     # Source the git prompt
     . ~/config/.git_prompt.zsh
     export PS1="$(git_info)$(new_line)%2/ > "
-}
-
-execute_raw_binary() {
-  qemu-system-x86_64 -drive format=raw,file=$1 
 }
 
 export PATH="$HOME/.cargo/bin:/usr/local/sbin:$PATH"
