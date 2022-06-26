@@ -23,7 +23,9 @@ function! ToggleComment()
         let s:pattern = '\/\/'
     elseif l:extension == "sh"
         let s:pattern = "#"
-    endif
+    elseif l:extension == "py"
+        let s:pattern = "#"
+     endif
     if (s:pattern == '')
         :echo "Cannot comment: file extension '.".l:extension."' not supported yet"
         return
