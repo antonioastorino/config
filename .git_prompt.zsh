@@ -22,9 +22,9 @@ git_info(){
             commit_id=empty
         fi
 
-        VCS_INFO="${EMB}(${EMG}git${EMB}:${EMG}${ref}${G} ${commit_id})"
+        VCS_INFO="${EMM}(${EMG}git${EMM}:${EMG}${ref}${G} ${commit_id})"
 
-        VCS_INFO+="${EMB}("
+        VCS_INFO+="${EMM}("
         # multistep actions e.g.: rebase -i/merge conflict/etc...
         # Logic inspired by https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
         local action=''
@@ -52,7 +52,7 @@ git_info(){
 
         # Warn about Detached HEAD if there is no other action running
         [[ -z "$action" ]] && action=$DH
-        [[ -n "$action" ]] && VCS_INFO+="${EMR}$action${EMB} "
+        [[ -n "$action" ]] && VCS_INFO+="${EMR}$action${EMM} "
 
         # staged / unstaged / untracked changes
         local staged=0; unstaged=0; untracked=0
@@ -63,17 +63,17 @@ git_info(){
             [[ "$line" = \?\?\ *      ]] && ((untracked++));
         done < <(git status --porcelain 2>/dev/null)
 
-        [[ ${staged}    -ne 0 ]] && staged="${G}${staged}${EMB}"
-        [[ ${unstaged}  -ne 0 ]] && unstaged="${R}${unstaged}${EMB}"
-        [[ ${untracked} -ne 0 ]] && untracked="${Y}${untracked}${EMB}"
+        [[ ${staged}    -ne 0 ]] && staged="${G}${staged}${EMM}"
+        [[ ${unstaged}  -ne 0 ]] && unstaged="${R}${unstaged}${EMM}"
+        [[ ${untracked} -ne 0 ]] && untracked="${Y}${untracked}${EMM}"
         VCS_INFO+="${staged}/${unstaged}/${untracked}"
 
         # stash
         if [[ -s ${gitdir}/refs/stash ]]; then
             local stash=$(git stash list 2>/dev/null | wc -l)
-            VCS_INFO+="${EMB} stash:${Y}${stash}${EMB})"
+            VCS_INFO+="${EMM} stash:${Y}${stash}${EMM})"
         else
-            VCS_INFO+="${EMB})"
+            VCS_INFO+="${EMM})"
         fi
 
         # Are we on a remote-tracking branch?
@@ -83,7 +83,7 @@ git_info(){
 
         if [[ -n "$remote" ]]
         then
-            VCS_INFO+="${EMB}("
+            VCS_INFO+="${EMM}("
 
             # for git prior to 1.7
             # ahead=$(git rev-list origin/${branch}..HEAD | wc -l)
@@ -98,7 +98,7 @@ git_info(){
             local behind=$(git rev-list HEAD..${branch}@{upstream} 2>/dev/null | wc -l | awk '{print $1}')
             if [[ $behind != 0 ]]
             then
-                [[ $ahead != 0 ]] && VCS_INFO+="${EMB}/"
+                [[ $ahead != 0 ]] && VCS_INFO+="${EMM}/"
                 VCS_INFO+="${R}-$behind"
             fi
 
@@ -107,7 +107,7 @@ git_info(){
                 VCS_INFO+=" "
             fi
 
-            VCS_INFO+="${EMB}$remote)"
+            VCS_INFO+="${EMM}$remote)"
         fi
 
         VCS_INFO+="${NONE}"

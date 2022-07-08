@@ -23,7 +23,9 @@ function! ToggleComment()
         let s:pattern = '\/\/'
     elseif l:extension == "sh"
         let s:pattern = "#"
-    endif
+    elseif l:extension == "py"
+        let s:pattern = "#"
+     endif
     if (s:pattern == '')
         :echo "Cannot comment: file extension '.".l:extension."' not supported yet"
         return
@@ -62,6 +64,8 @@ function! Format()
         endif
         silent !rm fmttmp.tmp
         :redraw!
+    elseif l:extension == "py"
+        silent! w | w !autopep8 --in-place --aggressive --aggressive %
     elseif l:extension == "rs"
         w | w !rustfmt %
     else
@@ -85,7 +89,7 @@ endfunction
 
 function! FindLocal()
     let s:wordUnderCursor = expand("<cword>")
-    " Close the navicagion window if already open.
+    " Close the navigation window if already open.
     :cclose
     :execute 'vimgrep /\<'.s:wordUnderCursor.'\>/g %'
 endfunction
