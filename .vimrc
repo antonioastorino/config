@@ -7,7 +7,7 @@ let mapleader = " "
 so ~/config/mapping.vim
 so ~/config/settings.vim
 
-autocmd BufNewFile,BufRead *.ino setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd BufNewFile,BufRead *.ino,*.html setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
 
@@ -66,7 +66,9 @@ function! Format()
         :redraw!
     elseif l:extension == "py"
         silent! w | w !autopep8 --in-place --aggressive --aggressive %
-    elseif l:extension == "rs"
+    elseif l:extension == "html"
+        w | w !tidy -iqm --wrap 150 --tidy-mark no %
+     elseif l:extension == "rs"
         w | w !rustfmt %
     else
         :echo "Cannot format: file extension '.".l:extension."' not supported yet"

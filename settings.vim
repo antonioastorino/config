@@ -33,7 +33,7 @@ let g:gitgutter_sign_modified_removed        = '~_'
 let &t_SI.="\e[5 q"
 let &t_SR.="\e[4 q"
 let &t_EI.="\e[1 q"
-highlight CursorLine   cterm=underline ctermbg=none
+highlight CursorLine   cterm=NONE ctermbg=darkgray
 highlight CursorColumn cterm=NONE ctermbg=darkgray guibg=darkgray
 highlight Visual       ctermbg=green ctermfg=white
 autocmd VimEnter    * setlocal cursorline
@@ -67,7 +67,7 @@ let g:netrw_list_hide = netrw_gitignore#Hide()
 let g:netrw_list_hide = '^\./$,^\.\./$'
 let g:netrw_winsize = 30
 
-" Syntax hightlight
+" Syntax highlight
 let g:cpp_function_highlight = 1
 let g:cpp_attributes_highlight = 1
 let g:cpp_member_highlight = 1

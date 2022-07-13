@@ -1,0 +1,7 @@
+indent: auto
+indent-spaces: 2
+wrap: 1500
+tab-size: 4
+quiet: yes
+show-warnings: no
+tidy-mark: no
