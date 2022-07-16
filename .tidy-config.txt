@@ -1,6 +1,6 @@
 indent: auto
 indent-spaces: 2
-wrap: 1500
+wrap: 100
 tab-size: 4
 quiet: yes
 show-warnings: no

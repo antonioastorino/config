@@ -67,7 +67,7 @@ function! Format()
     elseif l:extension == "py"
         silent! w | w !autopep8 --in-place --aggressive --aggressive %
     elseif l:extension == "html"
-        w | w !tidy -iqm --wrap 150 --tidy-mark no %
+        w | w !tidy -m -config $HOME/config/.tidy-config.txt %
      elseif l:extension == "rs"
         w | w !rustfmt %
     else
