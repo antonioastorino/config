@@ -1,7 +1,10 @@
-indent: auto
+indent: yes
 indent-spaces: 2
+output-xhtml: yes
+doctype: html5
+repeated-attributes: keep-last
 wrap: 100
-tab-size: 4
+tab-size: 2
 quiet: yes
-show-warnings: no
+show-warnings: yes
 tidy-mark: no
