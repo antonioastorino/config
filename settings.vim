@@ -15,6 +15,8 @@ set t_Co=256
 set autoread
 set ruler
 set showmatch
+set splitbelow splitright
+set scrolloff=40
 
 " GitGutter
 set updatetime=100

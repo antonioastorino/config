@@ -118,7 +118,8 @@ endfunction
 let s:term_buf_nr = -1
 function! ToggleTerminal() abort
     if s:term_buf_nr == -1
-        execute "botright terminal"
+        execute "terminal"
+        execute "norm! \<C-W>L"
         let s:term_buf_nr = bufnr("$")
     else
         try
