@@ -7,7 +7,7 @@ autoload -Uz compinit && compinit
 
 __prompt_command() {
     new_line() {
-      printf "\n$USER - "
+      printf "\n$USER@$HOST - "
     }
     # from http://wiki.archlinux.org/index.php/Color_Bash_Prompt
     local NONE="\033[0m" # unsets color to term's fg color

@@ -7,7 +7,7 @@ let mapleader = " "
 so ~/config/mapping.vim
 so ~/config/settings.vim
 
-autocmd BufNewFile,BufRead *.ino,*.html setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd BufNewFile,BufRead *.ino,*.html,*.js setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
 let s:prettier_list = ["css","html","json","js"]
