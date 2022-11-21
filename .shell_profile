@@ -1,5 +1,5 @@
 setopt histignorealldups
-alias ll="ls -la"
+alias ll="ls -lah"
 alias ldd="otool -L"
 alias vscode="open -a Visual\ Studio\ Code.app"
 # Enable autocomplete for git

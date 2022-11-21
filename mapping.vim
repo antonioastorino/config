@@ -12,6 +12,7 @@ nnoremap cu maviwu`a
 nnoremap cU maviwU`a
 inoremap <c-u> <Esc>gUiw`]a
 inoremap <expr> <tab> Autocomplete()
+nnoremap <leader>p "0p
 
 " source/modify vimrc
 nnoremap <leader>sv :so $MYVIMRC<cr>
