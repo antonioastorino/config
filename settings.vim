@@ -1,4 +1,5 @@
 syntax on
+set background=dark
 filetype plugin on
 set path+=**
 set wildmenu
