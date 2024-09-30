@@ -7,7 +7,7 @@ let mapleader = " "
 so ~/config/mapping.vim
 so ~/config/settings.vim
 
-autocmd BufNewFile,BufRead *.ino,*.html,*.js setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd BufNewFile,BufRead *.html,*.js setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
 let s:prettier_list = ["css","html","json","js"]
@@ -51,11 +51,7 @@ function! Format()
     let l:extension = expand('%:e')
     " Save the file, pass it to clang-format
     if index(s:clang_list, l:extension) >= 0
-        if l:extension == "ino"
-            let $format_style = "{IndentWidth: 2}"
-        else
-            let $format_style = join(readfile($HOME."/config/.clang-format"))
-        endif
+        let $format_style = join(readfile($HOME."/config/.clang-format"))
         silent! w | w !clang-format --style=$format_style > %
     elseif index(s:prettier_list, l:extension) >= 0
         silent! w | w !npx prettier --config $HOME/config/.prettierrc.json --write %
