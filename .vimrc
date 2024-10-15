@@ -66,7 +66,7 @@ function! Format()
         silent !rm fmttmp.tmp
         edraw!
     elseif l:extension == "py"
-        silent! w | w !autopep8 --in-place --aggressive --aggressive --max-line-length 100 %
+        silent! w | w !python3 -m autopep8 --in-place --aggressive --aggressive --max-line-length 100 %
      elseif l:extension == "rs"
         w | w !rustfmt %
     else
