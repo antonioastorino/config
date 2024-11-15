@@ -64,7 +64,7 @@ function! Format()
             :retab
         endif
         silent !rm fmttmp.tmp
-        edraw!
+        redraw!
     elseif l:extension == "py"
         silent! w | w !python3 -m autopep8 --in-place --aggressive --aggressive --max-line-length 100 %
      elseif l:extension == "rs"

@@ -18,6 +18,7 @@ set ruler
 set showmatch
 set splitbelow splitright
 set scrolloff=40
+set backspace=indent,eol,start
 
 " GitGutter
 set updatetime=100
