@@ -17,7 +17,7 @@ set autoread
 set ruler
 set showmatch
 set splitbelow splitright
-set scrolloff=40
+set scrolloff=5
 set backspace=indent,eol,start
 
 " GitGutter
