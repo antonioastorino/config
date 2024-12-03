@@ -40,8 +40,8 @@ tnoremap <c-j> <c-w>j
 tnoremap <c-k> <c-w>k
 tnoremap <c-l> <c-w>l
 
-nnoremap <leader>j <PageDown>zz
-nnoremap <leader>k <PageUp>zz
+nnoremap <leader>j 10j
+nnoremap <leader>k 10k
 
 nnoremap <Up> :resize +2<cr>
 nnoremap <Down> :resize -2<cr>
