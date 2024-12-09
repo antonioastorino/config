@@ -38,8 +38,8 @@ let g:gitgutter_sign_modified_removed        = '~_'
 let &t_SI.="\e[5 q"
 let &t_SR.="\e[4 q"
 let &t_EI.="\e[1 q"
-highlight CursorLine   cterm=NONE ctermbg=darkgray
-highlight CursorColumn cterm=NONE ctermbg=darkgray guibg=darkgray
+highlight CursorLine   cterm=NONE ctermbg=236
+highlight CursorColumn cterm=NONE ctermbg=236 guibg=darkgray
 highlight Visual       ctermbg=green ctermfg=white
 autocmd VimEnter    * setlocal cursorline
 autocmd WinEnter    * setlocal cursorline
