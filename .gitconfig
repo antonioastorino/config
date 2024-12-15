@@ -17,3 +17,5 @@
 [core]
 	autocrlf = false
 	editor = vim
+[push]
+	autoSetupRemote = true
