@@ -4,6 +4,6 @@ if [ -f ~/config/.shell_profile ]; then
 fi
 
 
-if [ "`uname`" = "Linux" ]; then
+if [ "`uname`" = "Linux" ] && ! [ "`uname -m`" = "aarch64" ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi

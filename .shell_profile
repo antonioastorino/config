@@ -37,4 +37,4 @@ __prompt_command() {
     export PS1="$(git_info)$(new_line)%2/ > "
 }
 
-export PATH="$HOME/.cargo/bin:/usr/local/sbin:$PATH"
+export PATH="$HOME/.cargo/bin:$HOME/.npm-global/bin:/usr/local/sbin:$PATH"
