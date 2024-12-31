@@ -22,6 +22,8 @@ function! ToggleComment()
     let s:pattern = ''
     if index(s:clang_list, l:extension) >= 0
         let s:pattern = '\/\/'
+    elseif l:extension == "rs"
+        let s:pattern = '\/\/'
     elseif l:extension == "sh"
         let s:pattern = "#"
     elseif l:extension == "py"
@@ -51,8 +53,7 @@ function! Format()
     let l:extension = expand('%:e')
     " Save the file, pass it to clang-format
     if index(s:clang_list, l:extension) >= 0
-        let $format_style = join(readfile($HOME."/config/.clang-format"))
-        silent! w | w !clang-format --style=$format_style > %
+        silent! w | w !clang-format --style=file:"$HOME/config/.clang-format"> %
     elseif index(s:prettier_list, l:extension) >= 0
         silent! w | w !npx prettier --config $HOME/config/.prettierrc.json --write %
     elseif l:extension == "sh"

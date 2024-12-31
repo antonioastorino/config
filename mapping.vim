@@ -24,7 +24,8 @@ nnoremap <leader>l :Lexplore<cr>
 " Manage windows
 nnoremap <leader><leader>w :w<cr>
 nnoremap <leader><leader>q :q<cr>
-nnoremap <leader>wq :wq<cr>
+nnoremap <leader>w f_
+nnoremap <leader>b F_
 inoremap <c-h> <esc><c-w>h
 inoremap <c-j> <esc><c-w>j
 inoremap <c-k> <esc><c-w>k
@@ -54,13 +55,6 @@ tnoremap <silent> <c-t> <C-w>N:call ToggleTerminal()<CR>
 tnoremap <c-n> <c-w>N
 
 " Git
-nnoremap <leader>gd :call GitDiff()<cr>
 nnoremap <leader>hp :call ToggleHunkPreview()<cr>
 nnoremap <leader>hn :GitGutterNextHunk<cr>
 nnoremap <leader>hN :GitGutterPrevHunk<cr>
-
-" Find
-nnoremap <leader><leader>f :call FindGlobal()<cr>
-nnoremap <leader>f :call FindLocal()<cr>
-nnoremap <leader>n :cnext<cr>
-nnoremap <leader>N :cprev<cr>
