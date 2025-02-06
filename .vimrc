@@ -24,6 +24,8 @@ function! ToggleComment()
         let s:pattern = '\/\/'
     elseif l:extension == "rs"
         let s:pattern = '\/\/'
+    elseif l:extension == "zig"
+        let s:pattern = '\/\/'
     elseif l:extension == "sh"
         let s:pattern = "#"
     elseif l:extension == "py"
@@ -70,6 +72,8 @@ function! Format()
         silent! w | w !python3 -m autopep8 --in-place --aggressive --aggressive --max-line-length 100 %
      elseif l:extension == "rs"
         w | w !rustfmt %
+     elseif l:extension == "zig"
+        w | w !zig fmt %
     else
         :echo "Cannot format: file extension '.".l:extension."' not supported yet"
     endif
