@@ -7,10 +7,10 @@ let mapleader = " "
 so ~/config/mapping.vim
 so ~/config/settings.vim
 
-autocmd BufNewFile,BufRead *.html,*.js setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd BufNewFile,BufRead *.html,*.js,*.ts,*.swift setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
-let s:prettier_list = ["css","html","json","js"]
+let s:prettier_list = ["css","html","json","js","ts"]
 
 function! MakeTags()
     silent !ctags -R .
@@ -31,6 +31,8 @@ function! ToggleComment()
     elseif l:extension == "py"
         let s:pattern = "#"
     elseif l:extension == "js"
+        let s:pattern = '\/\/'
+    elseif l:extension == "ts"
         let s:pattern = '\/\/'
     endif
     if (s:pattern == '')
@@ -70,10 +72,12 @@ function! Format()
         redraw!
     elseif l:extension == "py"
         silent! w | w !python3 -m autopep8 --in-place --aggressive --aggressive --max-line-length 100 %
-     elseif l:extension == "rs"
+    elseif l:extension == "rs"
         w | w !rustfmt %
-     elseif l:extension == "zig"
+    elseif l:extension == "zig"
         w | w !zig fmt %
+    elseif l:extension == "swift"
+        w | w !swift-format - > %
     else
         :echo "Cannot format: file extension '.".l:extension."' not supported yet"
     endif
