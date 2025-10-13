@@ -7,7 +7,7 @@
   BinPackArguments: false,
   BinPackParameters: false,
   ExperimentalAutoDetectBinPacking: false,
-  AllowAllParametersOfDeclarationOnNextLine: true,
+  AllowAllParametersOfDeclarationOnNextLine: false,
   AllowShortIfStatementsOnASingleLine: false,
   AllowShortBlocksOnASingleLine: false,
   AllowShortCaseExpressionOnASingleLine: true,
