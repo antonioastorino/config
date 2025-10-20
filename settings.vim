@@ -19,6 +19,7 @@ set showmatch
 set splitbelow splitright
 set scrolloff=5
 set backspace=indent,eol,start
+set hlsearch
 
 " GitGutter
 set updatetime=100
@@ -63,6 +64,7 @@ highlight SpellCap cterm=underline
 highlight clear SpellLocal
 highlight SpellLocal cterm=underline
 highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE
+highlight Search ctermfg=Grey ctermbg=DarkGrey
 
 " Syntax highlight
 let g:cpp_function_highlight = 1
