@@ -14,6 +14,7 @@
 	prompt = false
 [alias]
 	d = difftool
+    logp = log --pretty='%h %an %ad %d %s'
 [core]
 	autocrlf = false
 	editor = vim
