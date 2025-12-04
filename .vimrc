@@ -10,9 +10,8 @@ so ~/config/settings.vim
 " fix hanging when opening .ts files
 " (https://vi.stackexchange.com/questions/25086/vim-hangs-when-i-open-a-typescript-file)
 autocmd BufNewFile,BufReadPre *.ts setlocal re=2
-
 autocmd BufNewFile,BufRead *.html,*.js,*.ts,*.swift setlocal tabstop=2 shiftwidth=2 softtabstop=2
-
+autocmd TerminalOpen * set nonu nornu
 
 let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
 let s:prettier_list = ["css","html","json","js","ts"]
