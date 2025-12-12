@@ -11,7 +11,7 @@
   AllowShortIfStatementsOnASingleLine: false,
   AllowShortBlocksOnASingleLine: false,
   AllowShortCaseExpressionOnASingleLine: true,
-  ColumnLimit: 100,
+  ColumnLimit: 0,
   AccessModifierOffset: -4,
   ConstructorInitializerAllOnOneLineOrOnePerLine: true,
   BreakBeforeBinaryOperators: All,
