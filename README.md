@@ -1,4 +1,16 @@
 # Configuration files
+## Usage
+Install dependencies (see below). Then run
+
+```bash
+pushd ~
+ln -s config/.vimrc .
+ln -s config/.zshrc .
+mkdir -p .vim/after/syntax
+cp config/c.vim .vim/after/syntax
+popd
+```
+
 ## Dependencies
 - clang-format (install using package manager)
 - gitgutter [git repo](https://github.com/airblade/vim-gitgutter)
