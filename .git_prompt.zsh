@@ -22,9 +22,9 @@ git_info(){
             commit_id=empty
         fi
 
-        VCS_INFO="${EMM}(${EMG}git${EMM}:${EMG}${ref}${G} ${commit_id})"
+        VCS_INFO="${DARK_GRAY}(${DARK_GRAY_BOLD}git:${C}${ref}${DARK_GRAY} ${commit_id})"
 
-        VCS_INFO+="${EMM}("
+        VCS_INFO+="${GRAY}("
         # multistep actions e.g.: rebase -i/merge conflict/etc...
         # Logic inspired by https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
         local action=''
@@ -62,18 +62,18 @@ git_info(){
             [[ "$line" = ?[ACDMRT]\ * ]] && ((unstaged++));
             [[ "$line" = \?\?\ *      ]] && ((untracked++));
         done < <(git status --porcelain 2>/dev/null)
-
-        [[ ${staged}    -ne 0 ]] && staged="${G}${staged}${EMM}"
-        [[ ${unstaged}  -ne 0 ]] && unstaged="${R}${unstaged}${EMM}"
-        [[ ${untracked} -ne 0 ]] && untracked="${Y}${untracked}${EMM}"
+        
+        [[ ${staged}    -ne 0 ]] && staged="${G}${staged}${DARK_GRAY}"
+        [[ ${unstaged}  -ne 0 ]] && unstaged="${R}${unstaged}${GRAY}"
+        [[ ${untracked} -ne 0 ]] && untracked="${Y}${untracked}${GRAY}"
         VCS_INFO+="${staged}/${unstaged}/${untracked}"
 
         # stash
         if [[ -s ${gitdir}/refs/stash ]]; then
             local stash=$(git stash list 2>/dev/null | wc -l)
-            VCS_INFO+="${EMM} stash:${Y}${stash}${EMM})"
+            VCS_INFO+="${GRAY} stash:${Y}${stash}${GRAY})"
         else
-            VCS_INFO+="${EMM})"
+            VCS_INFO+="${GRAY})"
         fi
 
         # Are we on a remote-tracking branch?
@@ -83,7 +83,7 @@ git_info(){
 
         if [[ -n "$remote" ]]
         then
-            VCS_INFO+="${EMM}("
+            VCS_INFO+="${GRAY}("
 
             # for git prior to 1.7
             # ahead=$(git rev-list origin/${branch}..HEAD | wc -l)
@@ -98,7 +98,7 @@ git_info(){
             local behind=$(git rev-list HEAD..${branch}@{upstream} 2>/dev/null | wc -l | awk '{print $1}')
             if [[ $behind != 0 ]]
             then
-                [[ $ahead != 0 ]] && VCS_INFO+="${EMM}/"
+                [[ $ahead != 0 ]] && VCS_INFO+="${GRAY}/"
                 VCS_INFO+="${R}-$behind"
             fi
 
@@ -107,7 +107,7 @@ git_info(){
                 VCS_INFO+=" "
             fi
 
-            VCS_INFO+="${EMM}$remote)"
+            VCS_INFO+="${GRAY}$remote)"
         fi
 
         VCS_INFO+="${NONE}"

@@ -20,7 +20,8 @@ __prompt_command() {
     local B="\033[0;34m" # blue
     local M="\033[0;35m" # magenta
     local C="\033[0;36m" # cyan
-    local W="\033[0;37m" # white
+    local GRAY="\033[0;37m" 
+    local DARK_GRAY="\033[0;90m"
 
     # emphasized (bolded) colors
     local EMK="\033[1;95m"
@@ -30,7 +31,8 @@ __prompt_command() {
     local EMB="\033[1;34m"
     local EMM="\033[1;35m"
     local EMC="\033[1;36m"
-    local EMW="\033[1;37m"
+    local GRAY_BOLD="\033[1;37m"
+    local DARK_GRAY_BOLD="\033[1;90m"
 
     # Source the git prompt
     . ~/config/.git_prompt.zsh
