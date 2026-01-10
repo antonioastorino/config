@@ -26,7 +26,7 @@ hi Statement  ctermfg=Gray        cterm=bold
 hi Identifier ctermfg=Gray        cterm=none
 hi String     ctermfg=DarkGreen   cterm=bold
 hi Type       ctermfg=Cyan        cterm=none   
-hi Comment    ctermfg=DarkMagenta cterm=none   
+hi Comment    ctermfg=DarkGreen   ctermbg=black cterm=none
 hi Constant   ctermfg=Cyan        cterm=none
 hi SpecialKey ctermfg=Blue        cterm=bold
 

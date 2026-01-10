@@ -6,6 +6,7 @@ inoremap <c-f> <esc>:call Format()<cr>
 nnoremap <c-f> :call Format()<cr>
 inoremap <c-x> <esc>:call ToggleComment()<cr>
 nnoremap <c-x> :call ToggleComment()<cr>
+xnoremap <c-x> :call ToggleComment()<cr>
 
 " Text manipulation
 nnoremap cu maviwu`a
