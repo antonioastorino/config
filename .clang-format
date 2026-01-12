@@ -11,6 +11,13 @@
   AllowShortIfStatementsOnASingleLine: false,
   AllowShortBlocksOnASingleLine: false,
   AllowShortCaseExpressionOnASingleLine: true,
+  AllowShortCaseLabelsOnASingleLine: true,
+  AlignConsecutiveShortCaseStatements:
+  { Enabled: true,
+    AcrossEmptyLines: true,
+    AcrossComments: true,
+    AlignCaseColons: true,
+  }
   ColumnLimit: 0,
   AccessModifierOffset: -4,
   ConstructorInitializerAllOnOneLineOrOnePerLine: true,
