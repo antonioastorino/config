@@ -24,10 +24,10 @@ set hlsearch
 " Generic syntax highlights
 hi Statement  ctermfg=Gray        cterm=bold             
 hi Identifier ctermfg=Gray        cterm=none
-hi String     ctermfg=DarkGreen   cterm=bold
+hi String     ctermfg=LightBlue   cterm=none
 hi Type       ctermfg=Cyan        cterm=none   
 hi Comment    ctermfg=DarkGreen   ctermbg=black cterm=none
-hi Constant   ctermfg=Cyan        cterm=none
+hi Constant   ctermfg=Red         cterm=none
 hi SpecialKey ctermfg=Blue        cterm=bold
 
 " GitGutter
@@ -49,16 +49,12 @@ let &t_SI.="\e[5 q"
 let &t_SR.="\e[4 q"
 let &t_EI.="\e[1 q"
 highlight CursorLine   cterm=NONE ctermbg=236
-highlight CursorColumn cterm=NONE ctermbg=236 guibg=darkgray
 highlight Visual       ctermbg=green ctermfg=white
 autocmd VimEnter    * setlocal cursorline
 autocmd WinEnter    * setlocal cursorline
 autocmd BufWinEnter * setlocal cursorline
 autocmd WinLeave    * setlocal nocursorline
-autocmd VimEnter    * setlocal cursorcolumn
-autocmd WinEnter    * setlocal cursorcolumn
-autocmd BufWinEnter * setlocal cursorcolumn
-autocmd WinLeave    * setlocal nocursorcolumn
+autocmd FocusLost   * setlocal nocursorline
 
 " Spell checker - CamelCase is not a misspelled word
 syntax spell toplevel
