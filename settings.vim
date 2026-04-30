@@ -6,7 +6,6 @@ set wildmenu
 set tags=tags
 set autoindent
 set number relativenumber
-set nu rnu
 set smartindent
 set tabstop=4
 set softtabstop=4
@@ -49,10 +48,11 @@ let &t_SI.="\e[5 q"
 let &t_SR.="\e[4 q"
 let &t_EI.="\e[1 q"
 highlight CursorLine   cterm=NONE ctermbg=236
-highlight Visual       ctermbg=green ctermfg=white
+highlight Visual       ctermbg=green ctermfg=blue
 autocmd VimEnter    * setlocal cursorline
 autocmd WinEnter    * setlocal cursorline
 autocmd BufWinEnter * setlocal cursorline
+autocmd FocusGained * setlocal cursorline
 autocmd WinLeave    * setlocal nocursorline
 autocmd FocusLost   * setlocal nocursorline
 

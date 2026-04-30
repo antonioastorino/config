@@ -59,3 +59,6 @@ tnoremap <c-n> <c-w>N
 nnoremap <leader>hp :call ToggleHunkPreview()<cr>
 nnoremap <leader>hn :GitGutterNextHunk<cr>
 nnoremap <leader>hN :GitGutterPrevHunk<cr>
+
+" To binary
+noremap <c-b> :%!xxd <cr>
