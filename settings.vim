@@ -3,7 +3,6 @@ set background=dark
 filetype plugin on
 set path+=**
 set wildmenu
-set tags=tags
 set autoindent
 set number relativenumber
 set smartindent
@@ -25,7 +24,7 @@ hi Statement  ctermfg=Gray        cterm=bold
 hi Identifier ctermfg=Gray        cterm=none
 hi String     ctermfg=LightBlue   cterm=none
 hi Type       ctermfg=Cyan        cterm=none   
-hi Comment    ctermfg=DarkGreen   ctermbg=black cterm=none
+hi Comment    ctermfg=DarkGreen   ctermbg=none cterm=none
 hi Constant   ctermfg=Red         cterm=none
 hi SpecialKey ctermfg=Blue        cterm=bold
 
@@ -57,8 +56,7 @@ autocmd WinLeave    * setlocal nocursorline
 autocmd FocusLost   * setlocal nocursorline
 
 " Spell checker - CamelCase is not a misspelled word
-syntax spell toplevel
-set spell spelllang=en_us
+autocmd FileType markdown,text setlocal spell spelllang=en_us
 set spelloptions=camel
 highlight clear SpellBad
 highlight SpellBad cterm=underline

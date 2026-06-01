@@ -4,6 +4,29 @@
 set nocompatible
 let mapleader = " "
 
+" --- LSP --- start
+call plug#begin('~/.vim/plugged')
+Plug 'prabirshrestha/vim-lsp'
+call plug#end()
+
+if executable('clangd')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd',
+        \ 'cmd': {server_info->['clangd']},
+        \ 'allowlist': ['c', 'cpp'],
+    \ })
+endif
+
+" sudo apt install python3-pylsp
+if executable('pylsp')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pylsp',
+        \ 'cmd': {server_info->['pylsp']},
+        \ 'allowlist': ['python'],
+    \ })
+endif
+" --- LSP end ---
+
 so ~/config/mapping.vim
 so ~/config/settings.vim
 
@@ -15,11 +38,6 @@ autocmd TerminalOpen * set nonu nornu
 
 let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
 let s:prettier_list = ["css","html","json","js","ts"]
-
-function! MakeTags()
-    silent !ctags -R .
-    :redraw!
-endfunction
 
 function! ToggleComment()
     let l:extension = expand('%:e')
@@ -61,7 +79,7 @@ function! Format()
     let l:extension = expand('%:e')
     " Save the file, pass it to clang-format
     if index(s:clang_list, l:extension) >= 0
-        silent! w | w !clang-format --style=file:"$HOME/config/.clang-format"> %
+        silent! w | w !clang-format > %
     elseif index(s:prettier_list, l:extension) >= 0
         silent! w | w !npx prettier --config $HOME/config/.prettierrc.json --write %
     elseif l:extension == "sh"

@@ -1,7 +1,6 @@
 setopt histignorealldups
 alias ll="ls -lah"
 alias ldd="otool -L"
-alias vscode="open -a Visual\ Studio\ Code.app"
 # Enable autocomplete for git
 autoload -Uz compinit && compinit
 
@@ -37,6 +36,15 @@ __prompt_command() {
     # Source the git prompt
     . ~/config/.git_prompt.zsh
     export PS1="$(git_info)$(new_line)%2/ > "
+}
+
+__ptla_power_on() {
+    pushd ~/dev/instruments_api
+    source scripts/install/linux-setup.sh
+    pushd instruments_api
+    python instruments_api/mainframes/ptla_mainframe/ep_ptla_io_card.py
+    popd
+    popd
 }
 
 export PATH="$HOME/.cargo/bin:$HOME/.npm-global/bin:/usr/local/sbin:$PATH"

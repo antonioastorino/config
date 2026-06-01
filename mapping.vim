@@ -14,6 +14,9 @@ nnoremap cU maviwU`a
 inoremap <c-u> <Esc>gUiw`]a
 inoremap <expr> <tab> Autocomplete()
 nnoremap <leader>p "0p
+autocmd TerminalOpen * nnoremap <buffer> <leader>p :call term_sendkeys('', @0)<CR>
+autocmd TerminalOpen * nnoremap <buffer> p :call term_sendkeys('', @")<CR>
+
 
 " source/modify vimrc
 nnoremap <leader>sv :so $MYVIMRC<cr>
