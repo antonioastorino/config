@@ -31,6 +31,7 @@ autocmd BufNewFile,BufReadPre *.ts setlocal re=2
 autocmd BufNewFile,BufRead *.html,*.js,*.ts,*.swift setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd TerminalOpen * set nonu nornu
 autocmd FileType qf nnoremap <buffer> gf :call QfOpenInSplit()<CR>
+autocmd BufWritePost * if filereadable('tags') | call job_start([exepath('ctags'), '-R', '.']) | endif
 
 
 " Generic syntax highlights
@@ -266,8 +267,15 @@ function! FindGlobal()
 endfunction
 
 function! Autocomplete()
+    if pumvisible()
+        return "\<C-n>"
+    endif
+    let l:col = col('.') - 1
+    if l:col == 0 || getline('.')[l:col - 1] =~ '\s'
+        return "\<Tab>"
+    endif
     if &filetype ==# 'c' || &filetype ==# 'cpp' || &filetype ==# 'python'
-        return "\<C-x>\<C-o>"
+        return "\<C-x>\<C-]>"
     endif
     return "\<Tab>"
 endfunction
