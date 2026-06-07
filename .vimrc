@@ -32,7 +32,7 @@ autocmd BufNewFile,BufRead *.html,*.js,*.ts,*.swift setlocal tabstop=2 shiftwidt
 autocmd TerminalOpen * set nonu nornu
 autocmd FileType qf nnoremap <buffer> gf :call QfOpenInSplit()<CR>
 autocmd BufWritePost * if filereadable('tags') | call job_start([exepath('ctags'), '-R', '.']) | endif
-
+autocmd FileType c,cpp,python setlocal omnifunc=TagCompleteFunc
 
 " Generic syntax highlights
 hi Statement  ctermfg=Gray        cterm=bold             
@@ -266,6 +266,21 @@ function! FindGlobal()
 "    :execute "norm! \<C-W>p"
 endfunction
 
+function! TagCompleteFunc(findstart, base)
+    if a:findstart
+        let l:col = col('.') - 1
+        while l:col > 0 && getline('.')[l:col - 1] =~ '\k'
+            let l:col -= 1
+        endwhile
+        return l:col
+    else
+        let l:tags = map(taglist('^' . a:base), 'v:val["name"]')
+        let l:bufwords = filter(map(getline(1, '$')->copy(), {_, v -> matchstr(v, '\<' . a:base . '\k*')}), {_, v -> v != ''})
+        return uniq(sort(l:tags + l:bufwords))
+    endif
+endfunction
+autocmd FileType c,cpp,python setlocal omnifunc=TagCompleteFunc
+
 function! Autocomplete()
     if pumvisible()
         return "\<C-n>"
@@ -275,7 +290,7 @@ function! Autocomplete()
         return "\<Tab>"
     endif
     if &filetype ==# 'c' || &filetype ==# 'cpp' || &filetype ==# 'python'
-        return "\<C-x>\<C-]>"
+        return "\<C-x>\<C-o>"
     endif
     return "\<Tab>"
 endfunction
