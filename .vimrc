@@ -31,7 +31,7 @@ autocmd BufNewFile,BufReadPre *.ts setlocal re=2
 autocmd BufNewFile,BufRead *.html,*.js,*.ts,*.swift setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd TerminalOpen * set nonu nornu
 autocmd FileType qf nnoremap <buffer> gf :call QfOpenInSplit()<CR>
-autocmd BufWritePost * if filereadable('tags') | call job_start([exepath('ctags'), '-R', '.']) | endif
+autocmd BufWritePost * if filereadable('.keep-tags') | call job_start([exepath('ctags'), '-R', '.']) | endif
 autocmd FileType c,cpp,python setlocal omnifunc=TagCompleteFunc
 
 " Generic syntax highlights
@@ -94,8 +94,6 @@ let g:cpp_operator_highlight = 1
 
 " --- ctags ---
 set tags=./tags;,tags;
-call plug#begin('~/.vim/plugged')
-call plug#end()
 
 nnoremap <silent> gd :execute 'tag ' . expand('<cword>')<cr>
 nnoremap gr :call FindGlobal()<cr>
