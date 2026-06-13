@@ -31,7 +31,6 @@ autocmd BufNewFile,BufReadPre *.ts setlocal re=2
 autocmd BufNewFile,BufRead *.html,*.js,*.ts,*.swift setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd TerminalOpen * set nonu nornu
 autocmd FileType qf nnoremap <buffer> gf :call QfOpenInSplit()<CR>
-autocmd BufWritePost * if filereadable('.keep-tags') | call job_start([exepath('ctags'), '-R', '.']) | endif
 autocmd FileType c,cpp,python setlocal omnifunc=TagCompleteFunc
 
 " Generic syntax highlights
@@ -94,6 +93,8 @@ let g:cpp_operator_highlight = 1
 
 " --- ctags ---
 set tags=./tags;,tags;
+autocmd BufWritePost * if filereadable('.keep-tags') | call job_start([exepath('ctags'), '-R', '.']) | endif
+autocmd VimEnter * if filereadable('.keep-tags') | call job_start([exepath('ctags'), '-R', '.']) | endif
 
 nnoremap <silent> gd :execute 'tag ' . expand('<cword>')<cr>
 nnoremap gr :call FindGlobal()<cr>
@@ -257,11 +258,12 @@ endfunction
 
 function! FindGlobal()
     let s:wordUnderCursor = expand("<cword>")
-    :execute 'vimgrep /\<'.s:wordUnderCursor.'\>/g `fd -H --ignore-file .gitignore -E ".git" -E "tags"`'
-    " Open the navigation window.
-    :botright copen
-    " Move cursor to the window in which the search was launched.
-"    :execute "norm! \<C-W>p"
+    try
+        :execute 'vimgrep /\<'.s:wordUnderCursor.'\>/g `fd -H --ignore-file .gitignore -E ".git" -E "tags"`'
+        :botright copen
+    catch /E480/
+        echo "No matches found"
+    endtry
 endfunction
 
 function! TagCompleteFunc(findstart, base)
