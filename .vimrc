@@ -328,20 +328,8 @@ function! QfOpenInSplit()
 endfunction
 
 function! TermOpenFile()
-    let l:save_isfname = &isfname
-    setlocal isfname+=92
     let l:file = expand('<cfile>')
-    let &isfname = l:save_isfname
     wincmd p
-    silent split
-
-    augroup TermOpenFileSwap
-        autocmd!
-        autocmd SwapExists * let v:swapchoice = 'e'
-    augroup END
-
-    silent! execute 'edit! ' . fnameescape(l:file)
-
-    autocmd! TermOpenFileSwap
-    augroup! TermOpenFileSwap
+    split
+    execute 'edit ' . l:file
 endfunction
