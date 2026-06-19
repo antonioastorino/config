@@ -215,6 +215,9 @@ noremap <c-b> :%!xxd <cr>
 nnoremap gd <plug>(lsp-definition)
 nnoremap gr <plug>(lsp-references)
 autocmd FileType qf nnoremap <buffer> gf :call QfOpenInSplit()<CR>
+autocmd TerminalOpen * nnoremap <buffer> gf :call TermOpenFile()<CR>
+
+
 function! PythonRgRefs() abort
     let l:word = expand('<cword>')
     let l:cmd = "rg --vimgrep --smart-case -g '*.py' -w -- " . shellescape(l:word) . " ."
@@ -321,7 +324,7 @@ endfunction
 
 function! FindGlobal()
     let s:wordUnderCursor = expand("<cword>")
-    :execute 'vimgrep /\<'.s:wordUnderCursor.'\>/g `fd -H --ignore-file .gitignore -E ".git"`'
+    :execute 'rg --vimgrep /\<'.s:wordUnderCursor.'\>/g `fd -H --ignore-file .gitignore -E ".git"`'
     " Open the navigation window.
     :copen
     " Move cursor to the window in which the search was launched.
@@ -384,4 +387,11 @@ function! QfOpenInSplit()
   split
   execute 'buffer' l:qf_entry.bufnr
   call cursor(l:qf_entry.lnum, l:qf_entry.col)
+endfunction
+
+function! TermOpenFile()
+    let l:file = expand('<cfile>')
+    wincmd p
+    split
+    execute 'edit ' . l:file
 endfunction
