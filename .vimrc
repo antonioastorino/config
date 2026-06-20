@@ -21,6 +21,7 @@ set splitbelow splitright
 set scrolloff=5
 set backspace=indent,eol,start
 set hlsearch
+set t_vb=
 
 " fix hanging when opening .ts files
 " (https://vi.stackexchange.com/questions/25086/vim-hangs-when-i-open-a-typescript-file)
