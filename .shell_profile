@@ -1,6 +1,6 @@
 setopt histignorealldups
 alias ll="ls -lah"
-alias ldd="otool -L"
+alias rg="rg --path-separator // "
 # Enable autocomplete for git
 autoload -Uz compinit && compinit
 
