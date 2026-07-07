@@ -234,6 +234,7 @@ augroup END
 
 let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
 let s:prettier_list = ["css","html","json","js","ts"]
+let s:shell_list = ["sh","zsh"]
 
 function! ToggleComment()
     let l:extension = expand('%:e')
@@ -245,6 +246,8 @@ function! ToggleComment()
     elseif l:extension == "zig"
         let s:pattern = '\/\/'
     elseif l:extension == "sh"
+        let s:pattern = "#"
+    elseif l:extension == "zsh"
         let s:pattern = "#"
     elseif l:extension == "py"
         let s:pattern = "#"
@@ -278,7 +281,7 @@ function! Format()
         silent! w | w !clang-format > %
     elseif index(s:prettier_list, l:extension) >= 0
         silent! w | w !npx prettier --config $HOME/config/.prettierrc.json --write %
-    elseif l:extension == "sh"
+    elseif index(s:shell_list, l:extension) >= 0
         w | w !shfmt -i 4 > fmttmp.tmp
         if (v:shell_error)
             !echo "Failed to format shell script."
