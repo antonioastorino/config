@@ -47,4 +47,27 @@ __ptla_power_on() {
     popd
 }
 
+__lab_mnt() {
+    local REMOTE="effectengineer@EHV-LAB-001"
+
+    typeset -A PAIRS=(
+        ["/c:/data/OPM_FREQUENCY_TRACKING"]="$HOME/dev/lab_instruments_api"
+        ["/c:/Users/effectengineer/Documents/ptla"]="$HOME/dev/lab_ptla"
+        ["/c:/Users/effectengineer/antonio/instruments_api"]="$HOME/dev/lab_data"
+    )
+
+    for src mnt in ${(kv)PAIRS}; do
+        echo "Unmounting ${mnt}"
+        umount "${mnt}" 2>/dev/null
+        echo "Creating ${mnt}"
+        mkdir -p "${mnt}"
+        echo "Mounting ${mnt}"
+        sshfs "${REMOTE}:${src}" "${mnt}"
+    done
+}
+
+__vpn_connect() {
+    sudo openconnect --protocol=gp --servercert pin-sha256:gfFngFSj8mZQlHJvSiAz/VvUT0z3U9PJekRgzkX3G60= vpn.effectphotonics.nl
+}
+
 export PATH="$HOME/.cargo/bin:$HOME/.npm-global/bin:/usr/local/sbin:$PATH"
