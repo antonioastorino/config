@@ -51,18 +51,28 @@ __lab_mnt() {
     local REMOTE="effectengineer@EHV-LAB-001"
 
     typeset -A PAIRS=(
-        ["/c:/data/OPM_FREQUENCY_TRACKING"]="$HOME/dev/lab_instruments_api"
+        ["/c:/data/OPM_FREQUENCY_TRACKING"]="$HOME/dev/lab_data"
         ["/c:/Users/effectengineer/Documents/ptla"]="$HOME/dev/lab_ptla"
-        ["/c:/Users/effectengineer/antonio/instruments_api"]="$HOME/dev/lab_data"
+        ["/c:/Users/effectengineer/antonio/instruments_api"]="$HOME/dev/lab_instruments_api"
     )
 
     for src mnt in ${(kv)PAIRS}; do
-        echo "Unmounting ${mnt}"
-        umount "${mnt}" 2>/dev/null
-        echo "Creating ${mnt}"
+        echo " -- ${mnt} -- Unmounting this mount point"
+        fusermount3 -zu "${mnt}" 2>/dev/null
+        echo " -- ${mnt} -- Creating this mount point"
         mkdir -p "${mnt}"
-        echo "Mounting ${mnt}"
-        sshfs "${REMOTE}:${src}" "${mnt}"
+        echo " -- ${mnt} -- Mounting this mount point"
+        sshfs "${REMOTE}:${src}" "${mnt}" \
+            -o cache=yes,kernel_cache,attr_timeout=115,entry_timeout=1200
+
+        echo " -- ${mnt} -- Marking as a safe directory"
+        git config --global --add safe.directory "${mnt}"
+
+        if [ -d "${mnt}/.git" ]; then
+            echo " -- ${mnt} -- Enabling untracked cache"
+            git -C "${mnt}" config core.untrackedCache true
+            git -C "${mnt}" update-index --untracked-cache
+        fi
     done
 }
 
