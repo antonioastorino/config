@@ -47,18 +47,21 @@ __ptla_power_on() {
     popd
 }
 
+typeset -gA __LAB_PAIRS=(
+    ["/c:/data/OPM_FREQUENCY_TRACKING"]="$HOME/dev/lab_data"
+    ["/c:/Users/effectengineer/Documents/ptla"]="$HOME/dev/lab_ptla"
+    ["/c:/Users/effectengineer/antonio/instruments_api"]="$HOME/dev/lab_instruments_api"
+)
+
 __lab_mnt() {
     local REMOTE="effectengineer@EHV-LAB-001"
 
-    typeset -A PAIRS=(
-        ["/c:/data/OPM_FREQUENCY_TRACKING"]="$HOME/dev/lab_data"
-        ["/c:/Users/effectengineer/Documents/ptla"]="$HOME/dev/lab_ptla"
-        ["/c:/Users/effectengineer/antonio/instruments_api"]="$HOME/dev/lab_instruments_api"
-    )
+    for src mnt in ${(kv)__LAB_PAIRS}; do
+        if mountpoint -q "${mnt}" 2>/dev/null; then
+            echo " -- ${mnt} -- Already mounted, skipping"
+            continue
+        fi
 
-    for src mnt in ${(kv)PAIRS}; do
-        echo " -- ${mnt} -- Unmounting this mount point"
-        fusermount3 -zu "${mnt}" 2>/dev/null
         echo " -- ${mnt} -- Creating this mount point"
         mkdir -p "${mnt}"
         echo " -- ${mnt} -- Mounting this mount point"
@@ -72,6 +75,21 @@ __lab_mnt() {
             echo " -- ${mnt} -- Enabling untracked cache"
             git -C "${mnt}" config core.untrackedCache true
             git -C "${mnt}" update-index --untracked-cache
+
+            echo " -- ${mnt} -- Disabling CRLF conversion and related warnings"
+            git -C "${mnt}" config core.autocrlf input 
+            git -C "${mnt}" config core.safecrlf false
+        fi
+    done
+}
+
+__lab_umount() {
+    for mnt in ${(v)__LAB_PAIRS}; do
+        if mountpoint -q "${mnt}" 2>/dev/null; then
+            echo " -- ${mnt} -- Unmounting this mount point"
+            fusermount3 -zu "${mnt}"
+        else
+            echo " -- ${mnt} -- Not mounted, skipping"
         fi
     done
 }
