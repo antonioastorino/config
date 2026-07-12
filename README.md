@@ -18,6 +18,7 @@ popd
 - shfmt (use `curl -sS https://webinstall.dev/shfmt | bash` or `sudo apt install shfmt` on Linux)
 - npm (required by `prettier`) 
 - prettier (use `npm install -g prettier`) -- see below how to fix permissions
+- fd (use `brew install fd` or `sudo apt install fd-find`)
 
 
 ### Fix `npm install -g` permission

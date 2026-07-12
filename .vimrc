@@ -31,7 +31,10 @@ autocmd BufNewFile,BufReadPre *.ts setlocal re=2
 autocmd BufNewFile,BufRead *.html,*.js,*.ts,*.swift setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd TerminalOpen * set nonu nornu
 autocmd FileType qf nnoremap <buffer> gf :call QfOpenInSplit()<CR>
-autocmd FileType c,cpp,python setlocal omnifunc=TagCompleteFunc
+" Filetypes that have ctags configured; everything else falls back to
+" Vim's built-in keyword completion (see Autocomplete())
+let g:ctags_filetypes = ["c", "cpp", "python"]
+execute 'autocmd FileType ' . join(g:ctags_filetypes, ',') . ' setlocal omnifunc=TagCompleteFunc'
 
 " Generic syntax highlights
 hi Statement  ctermfg=Gray        cterm=bold             
@@ -279,7 +282,6 @@ function! TagCompleteFunc(findstart, base)
         return uniq(sort(l:tags + l:bufwords))
     endif
 endfunction
-autocmd FileType c,cpp,python setlocal omnifunc=TagCompleteFunc
 
 function! Autocomplete()
     if pumvisible()
@@ -289,10 +291,10 @@ function! Autocomplete()
     if l:col == 0 || getline('.')[l:col - 1] =~ '\s'
         return "\<Tab>"
     endif
-    if &filetype ==# 'c' || &filetype ==# 'cpp' || &filetype ==# 'python'
+    if index(g:ctags_filetypes, &filetype) >= 0
         return "\<C-x>\<C-o>"
     endif
-    return "\<Tab>"
+    return "\<C-n>"
 endfunction
 
 let s:term_buf_nr = -1
