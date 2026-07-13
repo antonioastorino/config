@@ -292,7 +292,7 @@ function! Format()
         silent !rm fmttmp.tmp
         redraw!
     elseif l:extension == "py"
-        silent! w | w !python3 -m autopep8 --in-place --aggressive --aggressive --max-line-length 100 %
+        silent! w | w !ruff format --line-length 100 --cache-dir /tmp/.ruff_cache %
     elseif l:extension == "rs"
         w | w !rustfmt %
     elseif l:extension == "zig"
