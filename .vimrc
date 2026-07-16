@@ -23,7 +23,8 @@ set backspace=indent,eol,start
 set hlsearch
 set t_vb=
 set shell=zsh
-
+set complete-=i
+"
 " fix hanging when opening .ts files
 " (https://vi.stackexchange.com/questions/25086/vim-hangs-when-i-open-a-typescript-file)
 autocmd BufNewFile,BufReadPre *.ts setlocal re=2
@@ -39,7 +40,7 @@ hi Identifier ctermfg=Gray        cterm=none
 hi String     ctermfg=LightBlue   cterm=none
 hi Type       ctermfg=Cyan        cterm=none   
 hi Comment    ctermfg=DarkGreen   ctermbg=none cterm=none
-hi Constant   ctermfg=Red         cterm=none
+hi Constant   ctermfg=Yellow      cterm=bold
 hi SpecialKey ctermfg=Blue        cterm=bold
 
 " GitGutter
@@ -57,9 +58,9 @@ let g:gitgutter_sign_removed_above_and_below = '_^'
 let g:gitgutter_sign_modified_removed        = '~_'
 
 " Cursor
-let &t_SI ="\e[5 q"
-let &t_SR ="\e[4 q"
-let &t_EI ="\e[1 q"
+let &t_SI.="\e[5 q"
+let &t_SR.="\e[4 q"
+let &t_EI.="\e[1 q"
 highlight CursorLine   cterm=NONE ctermbg=236
 highlight Visual       ctermbg=green ctermfg=blue
 autocmd VimEnter    * setlocal cursorline
@@ -120,8 +121,8 @@ inoremap <expr> <tab> Autocomplete()
 nnoremap <leader>p "0p
 
 " source/modify vimrc
-nnoremap <leader>sv :so $MYVIMRC<cr>
-nnoremap <leader>ev :vs $MYVIMRC<cr>
+nnoremap <leader>sv :so ~/config/.vimrc <cr>
+nnoremap <leader>ev :vs ~/config/.vimrc <cr>
 
 " Open file browser
 nnoremap <leader>l :Lexplore<cr>
@@ -163,6 +164,7 @@ tnoremap <c-n> <c-w>N
 nnoremap <leader>hp :call ToggleHunkPreview()<cr>
 nnoremap <leader>hn :GitGutterNextHunk<cr>
 nnoremap <leader>hN :GitGutterPrevHunk<cr>
+nnoremap <leader>ha :GitGutterStageHunk<cr>
 
 " To binary
 noremap <c-b> :%!xxd <cr>
@@ -170,6 +172,7 @@ noremap <c-b> :%!xxd <cr>
 " SETTINGS
 let s:clang_list = ["c","cpp","m","mm","h","hh","hpp","ino"]
 let s:prettier_list = ["css","html","json","js","ts"]
+let s:shell_list = ["sh","zsh"]
 
 function! ToggleComment()
     let l:extension = expand('%:e')
@@ -180,7 +183,7 @@ function! ToggleComment()
         let s:pattern = '\/\/'
     elseif l:extension == "zig"
         let s:pattern = '\/\/'
-    elseif l:extension == "sh"
+    elseif index(s:shell_list, l:extension) >= 0
         let s:pattern = "#"
     elseif l:extension == "py"
         let s:pattern = "#"
@@ -211,10 +214,10 @@ function! Format()
     let l:extension = expand('%:e')
     " Save the file, pass it to clang-format
     if index(s:clang_list, l:extension) >= 0
-        silent! w | w !clang-format --style=file:"$HOME/config/.clang-format"> %
+        silent! w | w !clang-format > %
     elseif index(s:prettier_list, l:extension) >= 0
-        silent! w | w !npx.cmd prettier --config $HOME/config/.prettierrc.json --write %
-    elseif l:extension == "sh"
+        silent! w | w !npx prettier --config $HOME/config/.prettierrc.json --write %
+    elseif index(s:shell_list, l:extension) >= 0
         w | w !shfmt -i 4 > fmttmp.tmp
         if (v:shell_error)
             !echo "Failed to format shell script."
@@ -225,7 +228,7 @@ function! Format()
         silent !rm fmttmp.tmp
         redraw!
     elseif l:extension == "py"
-        silent! w | w !python -m autopep8 --in-place --aggressive --aggressive --max-line-length 100 %
+        silent! w | w !ruff format --line-length 200 --cache-dir /tmp/.ruff_cache %
     elseif l:extension == "rs"
         w | w !rustfmt %
     elseif l:extension == "zig"

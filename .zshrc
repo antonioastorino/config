@@ -4,3 +4,4 @@ if [ -f ~/config/.shell_profile ]; then
         __prompt_command
     }
 fi
+export VIMINIT='source ~/config/.vimrc'
