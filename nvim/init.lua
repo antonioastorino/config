@@ -159,3 +159,53 @@ vim.opt.path:append("**")
 -- Vim completes the command line inline, cycling matches. Nvim defaults to
 -- "pum,tagfile", which dumps every match into a popup instead.
 vim.opt.wildoptions = ""
+
+-- Formatting. Each entry builds a command that reads the buffer on stdin and
+-- writes the result to stdout, so a failing formatter cannot damage the file
+-- the way Vim's "w !cmd > %" could: nothing is written unless it succeeds.
+-- The buffer is filtered in place, which keeps the cursor and one undo step.
+local formatters = {
+    c          = function(f) return { "clang-format", "--style=file:" .. vim.env.HOME .. "/config/.clang-format", "--assume-filename=" .. f } end,
+    python     = function() return { "autopep8", "--aggressive", "--aggressive", "--max-line-length", "100", "-" } end,
+    sh         = function() return { "shfmt", "-i", "4", "-" } end,
+    rust       = function() return { "rustfmt", "--emit", "stdout" } end,
+    zig        = function() return { "zig", "fmt", "--stdin" } end,
+    swift      = function() return { "swift-format" } end,
+}
+formatters.cpp = formatters.c
+formatters.objc = formatters.c
+formatters.objcpp = formatters.c
+formatters.arduino = formatters.c
+
+for _, ft in ipairs({ "css", "html", "json", "javascript", "typescript" }) do
+    formatters[ft] = function(f)
+        return { "npx", "prettier", "--config", vim.env.HOME .. "/config/.prettierrc.json", "--stdin-filepath", f }
+    end
+end
+
+local function format()
+    local build = formatters[vim.bo.filetype]
+    if not build then
+        vim.notify("Cannot format: no formatter for '" .. vim.bo.filetype .. "'", vim.log.levels.WARN)
+        return
+    end
+
+    local buf = vim.api.nvim_get_current_buf()
+    local input = table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), "\n") .. "\n"
+    local result = vim.system(build(vim.api.nvim_buf_get_name(buf)), { stdin = input, text = true }):wait()
+
+    if result.code ~= 0 then
+        vim.notify(vim.trim(result.stderr ~= "" and result.stderr or "formatter failed"), vim.log.levels.ERROR)
+        return
+    end
+
+    local view = vim.fn.winsaveview()
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split((result.stdout:gsub("\n$", "")), "\n"))
+    vim.fn.winrestview(view)
+end
+
+vim.keymap.set("n", "<c-f>", format, { desc = "Format buffer" })
+vim.keymap.set("i", "<c-f>", function()
+    vim.cmd.stopinsert()
+    format()
+end, { desc = "Format buffer" })
