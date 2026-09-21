@@ -12,6 +12,35 @@ end, { desc = "Source config" })
 
 vim.keymap.set("n", "<leader>ev", "<cmd>vsplit $MYVIMRC<cr>", { desc = "Edit config" })
 
+-- Colours. Nvim ships its own default highlights, which look nothing like
+-- Vim's; the "vim" colorscheme restores them. 'termguicolors' is off so the
+-- cterm values below are the ones that apply, as in Vim.
+vim.opt.background = "dark"
+vim.opt.termguicolors = false
+vim.cmd.colorscheme("vim")
+
+for group, spec in pairs({
+    Statement  = { ctermfg = "Gray", cterm = { bold = true } },
+    Identifier = { ctermfg = "Gray" },
+    String     = { ctermfg = "LightBlue" },
+    Type       = { ctermfg = "Cyan" },
+    Comment    = { ctermfg = "DarkGreen" },
+    Constant   = { ctermfg = "Red" },
+    SpecialKey = { ctermfg = "Blue", cterm = { bold = true } },
+}) do
+    vim.api.nvim_set_hl(0, group, spec)
+end
+
+-- Treesitter highlighting wherever a parser is installed; everything else
+-- falls back to the legacy syntax highlighter. Adding a language is
+-- :TSInstall <lang>, no change here. Replaces after/syntax/c.vim and
+-- vim-cpp-modern, which both approximate with regexes what the parser knows.
+vim.treesitter.language.register("bash", "sh")
+
+vim.api.nvim_create_autocmd("FileType", {
+    callback = function(ev) pcall(vim.treesitter.start, ev.buf) end,
+})
+
 -- Save / quit.
 vim.keymap.set("n", "<leader><leader>w", "<cmd>w<cr>", { desc = "Write buffer" })
 vim.keymap.set("n", "<leader><leader>q", "<cmd>q<cr>", { desc = "Quit window" })
