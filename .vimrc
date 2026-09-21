@@ -292,7 +292,7 @@ function! Format()
         silent !rm fmttmp.tmp
         redraw!
     elseif l:extension == "py"
-        silent! w | w !ruff format --line-length 100 --cache-dir /tmp/.ruff_cache %
+        silent! w | w !ruff format --line-length 140 --cache-dir /tmp/.ruff_cache %
     elseif l:extension == "rs"
         w | w !rustfmt %
     elseif l:extension == "zig"

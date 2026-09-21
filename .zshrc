@@ -4,6 +4,8 @@ if [ -f ~/config/.shell_profile ]; then
         __prompt_command
     }
 fi
+#Fix npm permissions
+export PATH="$HOME/.npm-global/bin:$PATH"
 
 # === Dynamic Embedded Toolchain Configurations ===
 
@@ -33,3 +35,4 @@ if [ -n "$DYNAMIC_AC6_BIN" ]; then
     export "AC6_TOOLCHAIN_${AC6_VAR_SUFFIX}"="$DYNAMIC_AC6_BIN"
 fi
 # =================================================
+export PATH="$HOME/.local/bin:$PATH"
