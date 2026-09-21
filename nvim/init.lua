@@ -12,24 +12,46 @@ end, { desc = "Source config" })
 
 vim.keymap.set("n", "<leader>ev", "<cmd>vsplit $MYVIMRC<cr>", { desc = "Edit config" })
 
--- Colours. Nvim ships its own default highlights, which look nothing like
--- Vim's; the "vim" colorscheme restores them. 'termguicolors' is off so the
--- cterm values below are the ones that apply, as in Vim.
-vim.opt.background = "dark"
-vim.opt.termguicolors = false
-vim.cmd.colorscheme("vim")
-
+-- Colours. Everything not listed here stays at nvim's default.
+-- To change one: put the cursor on the token, run :Inspect to see which
+-- groups apply, and add or edit a line below. 'termguicolors' is on, so
+-- values are gui hex -- ctermfg is ignored and will silently do nothing.
+-- Setting a legacy group (Type) covers all the treesitter captures that
+-- link to it (@type, @type.definition, ...); set a capture directly
+-- (@type.builtin) only when you want it to differ from the rest.
 for group, spec in pairs({
-    Statement  = { ctermfg = "Gray", cterm = { bold = true } },
-    Identifier = { ctermfg = "Gray" },
-    String     = { ctermfg = "LightBlue" },
-    Type       = { ctermfg = "Cyan" },
-    Comment    = { ctermfg = "DarkGreen" },
-    Constant   = { ctermfg = "Red" },
-    SpecialKey = { ctermfg = "Blue", cterm = { bold = true } },
+    -- The .vimrc colours by intent, softened for a truecolor display: the
+    -- raw ANSI values (#ff0000, #0000ff) are harsh on this background.
+    Statement  = { fg = "#c5c8c6", bold = true }, -- Gray
+    Identifier = { fg = "#b8bcc0" },              -- Gray
+    String     = { fg = "#c792ea" },              -- Mauve
+    Function   = { fg = "#a8d4ec", bold = true }, -- LightBlue
+    Comment    = { fg = "#6a9955" },              -- DarkGreen
+    Constant   = { fg = "#e06c75" },              -- Red
+    Special    = { fg = "#bfbf2f" },              -- DaryYellow 
+    Type       = { fg = "#ffff7b" },              -- Yellow
+    PreProc    = { fg = "#82b1ff", bold = true }, -- Blue
+    -- The directive captures fall back to @keyword, not PreProc, so they
+    -- need linking explicitly: #define/#ifdef/#endif, then #include.
+    ["@keyword.directive"] = { link = "PreProc" },
+    ["@keyword.import"]    = { link = "PreProc" },
+    -- int32_t is @type.builtin, which defaults to Special, and static/void
+    -- are @type.qualifier, which falls through to Statement. Put both on
+    -- Type so every type reads the same.
+    ["@type.builtin"]      = { link = "Type" },
+    ["@type.qualifier"]    = { link = "Type" },
 }) do
     vim.api.nvim_set_hl(0, group, spec)
 end
+
+-- Treesitter is finer grained than Vim's syntax groups, so some captures
+-- land on the wrong colour.
+-- @constant is any ALL_CAPS identifier, including every macro where it is
+-- used rather than defined; the parser cannot tell those from a constant.
+-- Vim left them uncoloured, so clear it. @constant.builtin (NULL, true) and
+-- @number keep their own links and stay Constant-coloured, as in Vim.
+vim.api.nvim_set_hl(0, "@constant", {})
+vim.api.nvim_set_hl(0, "@function.macro", { link = "PreProc" })
 
 -- Treesitter highlighting wherever a parser is installed; everything else
 -- falls back to the legacy syntax highlighter. Adding a language is
@@ -74,6 +96,10 @@ vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter", "FocusGaine
 vim.api.nvim_create_autocmd({ "WinLeave", "FocusLost" }, {
     callback = function() vim.wo.cursorline = false end,
 })
+
+-- Move by 10 lines.
+vim.keymap.set("n", "<leader>j", "10j")
+vim.keymap.set("n", "<leader>k", "10k")
 
 -- Window navigation. In terminal mode nvim has no <c-w> prefix, so leave
 -- terminal mode first with <c-\><c-n>; Vim's <c-w>h works there directly.
