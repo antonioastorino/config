@@ -4,9 +4,24 @@
 -- Leader. Must come before any mapping that uses it.
 vim.g.mapleader = " "
 
+-- Every autocmd below belongs to this group, which is cleared each time the
+-- file is sourced. Without it a reload stacks a second copy of every handler.
+local augroup = vim.api.nvim_create_augroup("init", { clear = true })
+
 -- Reload / edit this configuration.
 vim.keymap.set("n", "<leader>sv", function()
     vim.cmd.source(vim.env.MYVIMRC)
+    -- A plugin's setup() re-runs, but its per-buffer on_attach does not, so
+    -- mappings defined there would be missing until a restart.
+    local ok, gs = pcall(require, "gitsigns")
+    if ok then
+        gs.detach_all()
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.api.nvim_buf_is_loaded(buf) then
+                gs.attach(buf)
+            end
+        end
+    end
     vim.notify("Reloaded " .. vim.env.MYVIMRC)
 end, { desc = "Source config" })
 
@@ -60,6 +75,7 @@ vim.api.nvim_set_hl(0, "@function.macro", { link = "PreProc" })
 vim.treesitter.language.register("bash", "sh")
 
 vim.api.nvim_create_autocmd("FileType", {
+    group = augroup,
     callback = function(ev) pcall(vim.treesitter.start, ev.buf) end,
 })
 
@@ -70,6 +86,24 @@ vim.keymap.set("n", "<leader><leader>q", "<cmd>q<cr>", { desc = "Quit window" })
 -- Line numbers.
 vim.opt.number = true
 vim.opt.relativenumber = true
+
+-- Indentation: four spaces, two for the web-ish filetypes.
+vim.opt.autoindent = true
+vim.opt.smartindent = true
+vim.opt.expandtab = true
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+
+vim.api.nvim_create_autocmd("FileType", {
+    group = augroup,
+    pattern = { "html", "javascript", "typescript", "swift" },
+    callback = function()
+        vim.opt_local.tabstop = 2
+        vim.opt_local.softtabstop = 2
+        vim.opt_local.shiftwidth = 2
+    end,
+})
 
 -- Mouse stays on so selection and scrolling keep working, but a click in
 -- another window is swallowed instead of moving focus there. getmousepos()
@@ -91,9 +125,11 @@ vim.keymap.set("i", "<esc>", "<nop>")
 vim.api.nvim_set_hl(0, "CursorLine", { ctermbg = 236, bg = "#303030" })
 
 vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter", "FocusGained" }, {
+    group = augroup,
     callback = function() vim.wo.cursorline = true end,
 })
 vim.api.nvim_create_autocmd({ "WinLeave", "FocusLost" }, {
+    group = augroup,
     callback = function() vim.wo.cursorline = false end,
 })
 
@@ -127,6 +163,7 @@ for _, cmd in ipairs({ "ter", "term", "termi", "termin", "termina", "terminal" }
 end
 
 vim.api.nvim_create_autocmd("TermOpen", {
+    group = augroup,
     callback = function()
         vim.opt_local.number = false
         vim.opt_local.relativenumber = false
@@ -141,16 +178,46 @@ vim.api.nvim_create_autocmd("TermOpen", {
 -- only <c-n> above clears it. The window navigation maps pass through
 -- <c-\><c-n>, which must not count as leaving insert on purpose.
 vim.api.nvim_create_autocmd("TermEnter", {
+    group = augroup,
     callback = function() vim.b.term_insert = true end,
 })
 
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
+    group = augroup,
     callback = function()
         if vim.bo.buftype == "terminal" and vim.b.term_insert ~= false then
             vim.cmd.startinsert()
         end
     end,
 })
+
+-- Git signs, replacing vim-gitgutter. Same sign text and mappings; the
+-- preview toggles itself, so ToggleHunkPreview() is not needed.
+vim.opt.updatetime = 100
+
+require("gitsigns").setup({
+    signs = {
+        add          = { text = "++" },
+        change       = { text = "~~" },
+        delete       = { text = "__" },
+        topdelete    = { text = "^^" },
+        changedelete = { text = "~_" },
+    },
+    on_attach = function(buf)
+        local gs = require("gitsigns")
+        local function map(lhs, rhs, desc)
+            vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
+        end
+        map("<leader>hp", gs.preview_hunk, "Preview hunk")
+        map("<leader>hu", gs.reset_hunk, "Undo hunk")
+        map("<leader>hn", function() gs.nav_hunk("next") end, "Next hunk")
+        map("<leader>hN", function() gs.nav_hunk("prev") end, "Previous hunk")
+    end,
+})
+
+vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = "#00ff00", bg = "#0000ff" })
+vim.api.nvim_set_hl(0, "GitSignsChange", { fg = "#ffff00", bg = "#008000" })
+vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = "#ff0000", bg = "#ffff00" })
 
 -- File searching (:find, gf). Recursive, so headers resolve without knowing
 -- the project layout.

@@ -26,6 +26,13 @@ git clone --branch master https://github.com/nvim-treesitter/nvim-treesitter.git
 nvim -c 'TSInstallSync c cpp bash python typescript javascript tsx json' -c 'qa'
 ```
 
+Git signs come from gitsigns.nvim, installed the same way:
+
+```bash
+git clone --depth 1 https://github.com/lewis6991/gitsigns.nvim.git \
+    ~/.local/share/nvim/site/pack/plugins/start/gitsigns.nvim
+```
+
 The `master` branch is the one that supports Neovim 0.10/0.11; `main`
 requires 0.12. Adding a language later is just `:TSInstall <lang>` -- no
 configuration change. Treesitter replaces `c.vim` and `vim-cpp-modern`,
