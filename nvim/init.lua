@@ -8,6 +8,19 @@ vim.g.mapleader = " "
 -- file is sourced. Without it a reload stacks a second copy of every handler.
 local augroup = vim.api.nvim_create_augroup("init", { clear = true })
 
+-- Plugins live in ~/.local/share/nvim/site/pack/plugins/start and are only
+-- added to 'runtimepath' at startup, so one cloned mid-session is missing
+-- until nvim is restarted. Without this guard that aborts the whole file and
+-- everything below the failing require silently stops working.
+local function setup(name, opts)
+    local ok, module = pcall(require, name)
+    if not ok then
+        vim.notify(name .. " not found; restart nvim if you just installed it", vim.log.levels.WARN)
+        return
+    end
+    module.setup(opts)
+end
+
 -- Reload / edit this configuration.
 vim.keymap.set("n", "<leader>sv", function()
     vim.cmd.source(vim.env.MYVIMRC)
@@ -115,6 +128,10 @@ for _, click in ipairs({ "<LeftMouse>", "<2-LeftMouse>", "<3-LeftMouse>", "<4-Le
         end
         return click
     end, { expr = true })
+
+    -- In a terminal, a click would position the cursor and so drop out of
+    -- Terminal-Job mode. Swallow it and keep typing.
+    vim.keymap.set("t", click, "<nop>")
 end
 
 -- Leave insert mode with jk; <esc> is disabled so the habit sticks.
@@ -191,11 +208,70 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
     end,
 })
 
+-- File browsing, replacing netrw. A directory is an ordinary buffer: rename
+-- by editing the line, delete with dd, create by adding a line, then :w to
+-- apply. "-" goes to the parent directory, g? lists the keys.
+setup("oil", {
+    default_file_explorer = true,
+    delete_to_trash = true,
+    view_options = { show_hidden = true },
+})
+
+-- In its own split on the left, like netrw's :Lexplore, so the file being
+-- edited stays visible. Plain :Oil would take over the current window.
+vim.keymap.set("n", "<leader>l", "<cmd>leftabove vsplit | Oil<cr>", { desc = "Browse files" })
+
+-- <bs> goes up a directory, alongside oil's own "-".
+vim.api.nvim_create_autocmd("FileType", {
+    group = augroup,
+    pattern = "oil",
+    callback = function(ev)
+        vim.keymap.set("n", "<bs>", require("oil.actions").parent.callback,
+            { buffer = ev.buf, desc = "Parent directory" })
+    end,
+})
+
+-- <c-t> toggles a terminal in its own full-height column on the right.
+-- The buffer is tagged rather than held in a local, so a <leader>sv reload
+-- does not lose track of a terminal that is already open.
+local function toggle_terminal()
+    local term
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_valid(buf) and vim.b[buf].toggle_term then
+            term = buf
+            break
+        end
+    end
+
+    if term then
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+            if vim.api.nvim_win_get_buf(win) == term then
+                if #vim.api.nvim_list_wins() > 1 then
+                    vim.api.nvim_win_close(win, false)
+                end
+                return
+            end
+        end
+    end
+
+    vim.cmd("vsplit")
+    vim.cmd("wincmd L")
+    if term then
+        vim.api.nvim_win_set_buf(0, term)
+    else
+        vim.cmd("terminal")
+        vim.b[vim.api.nvim_get_current_buf()].toggle_term = true
+    end
+    vim.cmd.startinsert()
+end
+
+vim.keymap.set({ "n", "t" }, "<c-t>", toggle_terminal, { desc = "Toggle terminal" })
+
 -- Git signs, replacing vim-gitgutter. Same sign text and mappings; the
 -- preview toggles itself, so ToggleHunkPreview() is not needed.
 vim.opt.updatetime = 100
 
-require("gitsigns").setup({
+setup("gitsigns", {
     signs = {
         add          = { text = "++" },
         change       = { text = "~~" },

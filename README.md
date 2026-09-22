@@ -26,11 +26,13 @@ git clone --branch master https://github.com/nvim-treesitter/nvim-treesitter.git
 nvim -c 'TSInstallSync c cpp bash python typescript javascript tsx json' -c 'qa'
 ```
 
-Git signs come from gitsigns.nvim, installed the same way:
+The remaining plugins install the same way. gitsigns replaces vim-gitgutter
+and oil replaces netrw:
 
 ```bash
-git clone --depth 1 https://github.com/lewis6991/gitsigns.nvim.git \
-    ~/.local/share/nvim/site/pack/plugins/start/gitsigns.nvim
+cd ~/.local/share/nvim/site/pack/plugins/start
+git clone --depth 1 https://github.com/lewis6991/gitsigns.nvim.git
+git clone --depth 1 https://github.com/stevearc/oil.nvim.git
 ```
 
 The `master` branch is the one that supports Neovim 0.10/0.11; `main`
