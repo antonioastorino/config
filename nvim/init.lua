@@ -68,6 +68,15 @@ for group, spec in pairs({
     -- Type so every type reads the same.
     ["@type.builtin"]      = { link = "Type" },
     ["@type.qualifier"]    = { link = "Type" },
+    -- Control flow, otherwise indistinguishable from every other keyword:
+    -- do/while/for, then if/else. The legacy Repeat and Conditional groups
+    -- have no effect here, the captures route straight to @keyword.
+    ["@keyword.repeat"]      = { fg = "#e5a06a" }, -- Orange
+    ["@keyword.conditional"] = { fg = "#e5a06a" }, -- Orange
+    ["@keyword.return"]      = { fg = "#6cc7b8" }, -- Teal
+    -- sizeof and friends: keyword grey, italic to mark them as operators
+    -- rather than spending another hue on them.
+    ["@keyword.operator"]    = { fg = "#c5c8c6", italic = true },
 }) do
     vim.api.nvim_set_hl(0, group, spec)
 end
@@ -162,6 +171,12 @@ for _, key in ipairs({ "h", "j", "k", "l" }) do
     vim.keymap.set("t", "<c-" .. key .. ">", "<c-\\><c-n><c-w>" .. key)
 end
 
+-- Arrows resize the window instead of moving the cursor.
+vim.keymap.set("n", "<Up>", "<cmd>resize +2<cr>", { desc = "Taller" })
+vim.keymap.set("n", "<Down>", "<cmd>resize -2<cr>", { desc = "Shorter" })
+vim.keymap.set("n", "<Right>", "<cmd>vertical resize +2<cr>", { desc = "Wider" })
+vim.keymap.set("n", "<Left>", "<cmd>vertical resize -2<cr>", { desc = "Narrower" })
+
 -- Drop out of Terminal-Job mode. Vim uses <c-w>N, nvim <c-\><c-n>. Record
 -- the choice so re-entering the window does not undo it.
 vim.keymap.set("t", "<c-n>", function()
@@ -179,6 +194,33 @@ for _, cmd in ipairs({ "ter", "term", "termi", "termin", "termina", "terminal" }
         cmd, #cmd + 1, cmd))
 end
 
+-- The shell's working directory, which is not nvim's once you cd in the
+-- terminal. Linux exposes it as a symlink under /proc; macOS and the BSDs
+-- have no /proc, so ask lsof for the process's cwd descriptor instead.
+local function shell_cwd(pid)
+    if not pid then
+        return nil
+    end
+
+    local link = "/proc/" .. pid .. "/cwd"
+    if vim.uv.fs_stat(link) then
+        return vim.uv.fs_readlink(link)
+    end
+
+    local ok, out = pcall(function()
+        return vim.system({ "lsof", "-a", "-p", tostring(pid), "-d", "cwd", "-Fn" }, { text = true }):wait()
+    end)
+    if not ok or out.code ~= 0 then
+        return nil
+    end
+    for line in out.stdout:gmatch("[^\n]+") do
+        local dir = line:match("^n(.+)")
+        if dir then
+            return dir
+        end
+    end
+end
+
 vim.api.nvim_create_autocmd("TermOpen", {
     group = augroup,
     callback = function()
@@ -186,6 +228,50 @@ vim.api.nvim_create_autocmd("TermOpen", {
         vim.opt_local.relativenumber = false
         -- Pasting leaves you in normal mode; go straight back to the prompt.
         vim.keymap.set("n", "p", "p<cmd>startinsert<cr>", { buffer = true })
+
+        -- Plain gf would open the file in this window and destroy the
+        -- terminal. Open it in a split of the window we came from instead,
+        -- and honour the file:line:col that compilers and grep print --
+        -- <cfile> stops at the colon, so the position is read off the line.
+        vim.keymap.set("n", "gf", function()
+            local file = vim.fn.expand("<cfile>")
+            if file == "" then
+                return
+            end
+
+            local text, cursor = vim.api.nvim_get_current_line(), vim.fn.col(".")
+            local lnum, cnum
+            local from = 1
+            while true do
+                local first, last = text:find(file, from, true)
+                if not first then
+                    break
+                end
+                if cursor >= first and cursor <= last + 1 then
+                    lnum, cnum = text:match("^:(%d+):?(%d*)", last + 1)
+                    break
+                end
+                from = last + 1
+            end
+
+            if not vim.startswith(file, "/") then
+                local dir = shell_cwd(vim.b.terminal_job_pid)
+                if dir then
+                    file = dir .. "/" .. file
+                end
+            end
+
+            local term = vim.api.nvim_get_current_win()
+            vim.cmd("wincmd p")
+            if vim.api.nvim_get_current_win() == term then
+                vim.cmd("wincmd w")
+            end
+            vim.cmd("split")
+            vim.cmd.edit(file)
+            if lnum then
+                vim.api.nvim_win_set_cursor(0, { tonumber(lnum), math.max((tonumber(cnum) or 1) - 1, 0) })
+            end
+        end, { buffer = true, desc = "Open file under cursor" })
         vim.cmd.startinsert()
     end,
 })
