@@ -206,6 +206,34 @@ vim.keymap.set("n", "gd", function()
     end
 end, { silent = true, desc = "Jump to tag" })
 
+-- gr lists references in the quickfix list. rg applies .gitignore itself,
+-- so unlike .vimrc there is no fd file list to build, and it is much faster
+-- than :vimgrep over a large tree. Nvim 0.11 ships grr/gra/grn/gri/grt for
+-- LSP, which would make gr a prefix and stall on 'timeoutlen'.
+for _, lhs in ipairs({ "grr", "gra", "grn", "gri", "grt" }) do
+    pcall(vim.keymap.del, "n", lhs)
+end
+
+vim.keymap.set("n", "gr", function()
+    local word = vim.fn.expand("<cword>")
+    if word == "" then
+        return
+    end
+
+    local result = vim.system(
+        { "rg", "--vimgrep", "--smart-case", "--word-regexp", "--", word, "." },
+        { text = true }):wait()
+
+    local lines = vim.split(result.stdout or "", "\n", { trimempty = true })
+    if #lines == 0 then
+        vim.notify("No matches for '" .. word .. "'", vim.log.levels.WARN)
+        return
+    end
+
+    vim.fn.setqflist({}, "r", { title = "rg " .. word, lines = lines })
+    vim.cmd("botright copen")
+end, { desc = "References in quickfix" })
+
 -- Arrows resize the window instead of moving the cursor.
 vim.keymap.set("n", "<Up>", "<cmd>resize +2<cr>", { desc = "Taller" })
 vim.keymap.set("n", "<Down>", "<cmd>resize -2<cr>", { desc = "Shorter" })
