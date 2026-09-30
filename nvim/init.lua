@@ -105,6 +105,20 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.keymap.set("n", "<leader><leader>w", "<cmd>w<cr>", { desc = "Write buffer" })
 vim.keymap.set("n", "<leader><leader>q", "<cmd>q<cr>", { desc = "Quit window" })
 
+-- The jumplist is restored from the shada file, so <c-o> walked back into a
+-- previous session's history. Setting '0 in 'shada' does not stop it:
+-- including the ' item at all is what stores the jumplist, and it cannot be
+-- left out while 'shada' is non-empty. Clearing the list once nvim has
+-- started is the way; marks, registers and history keep working.
+vim.api.nvim_create_autocmd("VimEnter", {
+    group = augroup,
+    callback = function()
+        -- VimEnter fires before the shada file is read, so clear on the
+        -- next tick of the loop, once startup has actually finished.
+        vim.schedule(function() vim.cmd("clearjumps") end)
+    end,
+})
+
 -- Line numbers.
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -170,6 +184,27 @@ for _, key in ipairs({ "h", "j", "k", "l" }) do
     vim.keymap.set("i", "<c-" .. key .. ">", "<esc><c-w>" .. key)
     vim.keymap.set("t", "<c-" .. key .. ">", "<c-\\><c-n><c-w>" .. key)
 end
+
+-- Tags. Regenerated on write and at startup, but only in projects that opt
+-- in by having a .keep-tags file. vim.system() runs it without blocking,
+-- which is what .vimrc used job_start() for.
+vim.opt.tags = "./tags;,tags;"
+
+vim.api.nvim_create_autocmd({ "BufWritePost", "VimEnter" }, {
+    group = augroup,
+    callback = function()
+        if vim.fn.filereadable(".keep-tags") == 1 and vim.fn.executable("ctags") == 1 then
+            vim.system({ "ctags", "-R", "." })
+        end
+    end,
+})
+
+vim.keymap.set("n", "gd", function()
+    local ok, err = pcall(vim.cmd, "tag " .. vim.fn.expand("<cword>"))
+    if not ok then
+        vim.notify(err:gsub("^.-:%s*", ""), vim.log.levels.WARN)
+    end
+end, { silent = true, desc = "Jump to tag" })
 
 -- Arrows resize the window instead of moving the cursor.
 vim.keymap.set("n", "<Up>", "<cmd>resize +2<cr>", { desc = "Taller" })
@@ -303,9 +338,12 @@ setup("oil", {
     view_options = { show_hidden = true },
 })
 
--- In its own split on the left, like netrw's :Lexplore, so the file being
--- edited stays visible. Plain :Oil would take over the current window.
-vim.keymap.set("n", "<leader>l", "<cmd>leftabove vsplit | Oil<cr>", { desc = "Browse files" })
+-- In a floating window, so it never occupies a real window: opening a file
+-- closes the float and leaves the layout untouched, and the browser never
+-- enters the jumplist. q closes it.
+vim.keymap.set("n", "<leader>l", function()
+    require("oil").open_float()
+end, { desc = "Browse files" })
 
 -- <bs> goes up a directory, alongside oil's own "-".
 vim.api.nvim_create_autocmd("FileType", {
