@@ -96,9 +96,20 @@ vim.api.nvim_set_hl(0, "@function.macro", { link = "PreProc" })
 -- vim-cpp-modern, which both approximate with regexes what the parser knows.
 vim.treesitter.language.register("bash", "sh")
 
+-- Spell checking rides on treesitter: the queries mark comments (and
+-- Python docstrings) with @spell, and nvim then checks only those regions,
+-- leaving code alone. Enabled only where a parser started, so filetypes
+-- without one are not spell checked wholesale.
+vim.opt.spelllang = "en_us"
+vim.opt.spelloptions = "camel"
+
 vim.api.nvim_create_autocmd("FileType", {
     group = augroup,
-    callback = function(ev) pcall(vim.treesitter.start, ev.buf) end,
+    callback = function(ev)
+        if pcall(vim.treesitter.start, ev.buf) then
+            vim.opt_local.spell = true
+        end
+    end,
 })
 
 -- Save / quit.
@@ -424,19 +435,12 @@ vim.keymap.set({ "n", "t" }, "<c-t>", toggle_terminal, { desc = "Toggle terminal
 vim.opt.updatetime = 100
 
 setup("gitsigns", {
-    signs = {
-        add          = { text = "++" },
-        change       = { text = "~~" },
-        delete       = { text = "__" },
-        topdelete    = { text = "^^" },
-        changedelete = { text = "~_" },
-    },
     on_attach = function(buf)
         local gs = require("gitsigns")
         local function map(lhs, rhs, desc)
             vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
         end
-        map("<leader>hp", gs.preview_hunk, "Preview hunk")
+        map("<leader>hp", gs.preview_hunk_inline, "Preview hunk")
         map("<leader>hu", gs.reset_hunk, "Undo hunk")
         map("<leader>hn", function() gs.nav_hunk("next") end, "Next hunk")
         map("<leader>hN", function() gs.nav_hunk("prev") end, "Previous hunk")
