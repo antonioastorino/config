@@ -55,7 +55,7 @@ for group, spec in pairs({
     String     = { fg = "#c792ea" },              -- Mauve
     Function   = { fg = "#a8d4ec", bold = true }, -- LightBlue
     Comment    = { fg = "#6a9955" },              -- DarkGreen
-    Constant   = { fg = "#ffff7b", bold = true }, -- Yellow
+    Constant   = { fg = "#e06c75" },              -- Red
     Special    = { fg = "#bfbf2f" },              -- DaryYellow 
     Type       = { fg = "#ffff7b" },              -- Yellow
     PreProc    = { fg = "#82b1ff", bold = true }, -- Blue
@@ -465,7 +465,15 @@ vim.opt.wildoptions = ""
 -- the way Vim's "w !cmd > %" could: nothing is written unless it succeeds.
 -- The buffer is filtered in place, which keeps the cursor and one undo step.
 local formatters = {
-    c          = function(f) return { "clang-format", "--assume-filename=" .. f } end,
+    -- clang-format finds a project .clang-format by walking up from the
+    -- file; only when there is none does the global one in ~/config apply.
+    c = function(f)
+        local cmd = { "clang-format", "--assume-filename=" .. f }
+        if not vim.fs.find(".clang-format", { upward = true, path = vim.fs.dirname(f) })[1] then
+            table.insert(cmd, "--style=file:" .. vim.env.HOME .. "/config/.clang-format")
+        end
+        return cmd
+    end,
     python     = function() return { "ruff", "format", "--line-length", "140", "--cache-dir", "/tmp/.ruff_cache", "-" } end,
     sh         = function() return { "shfmt", "-i", "4", "-" } end,
     zsh        = function() return { "shfmt", "-i", "4", "-" } end,
