@@ -100,13 +100,17 @@ vim.treesitter.language.register("bash", "sh")
 -- Python docstrings) with @spell, and nvim then checks only those regions,
 -- leaving code alone. Enabled only where a parser started, so filetypes
 -- without one are not spell checked wholesale.
-vim.opt.spelllang = "en_us"
-vim.opt.spelloptions = "camel"
-
+-- Both options are local to the buffer, so they are set per buffer rather
+-- than globally: assigning them through vim.opt rewrites the current
+-- buffer's value too, and on a <leader>sv reload that wiped the
+-- noplainbuffer which vim.treesitter.start() appends. Without
+-- noplainbuffer the whole buffer is spell checked, code included.
 vim.api.nvim_create_autocmd("FileType", {
     group = augroup,
     callback = function(ev)
         if pcall(vim.treesitter.start, ev.buf) then
+            vim.bo[ev.buf].spelllang = "en_us"
+            vim.bo[ev.buf].spelloptions = "camel,noplainbuffer"
             vim.opt_local.spell = true
         end
     end,
