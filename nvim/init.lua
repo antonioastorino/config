@@ -439,12 +439,31 @@ vim.keymap.set({ "n", "t" }, "<c-t>", toggle_terminal, { desc = "Toggle terminal
 vim.opt.updatetime = 100
 
 setup("gitsigns", {
+    -- A full-width panel across the bottom rather than a small float by the
+    -- cursor. gitsigns passes this straight to nvim_open_win.
+    preview_config = {
+        style = "minimal",
+        border = "single",
+        relative = "editor",
+        anchor = "SW",
+        col = 0,
+    },
     on_attach = function(buf)
         local gs = require("gitsigns")
         local function map(lhs, rhs, desc)
             vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
         end
-        map("<leader>hp", gs.preview_hunk_inline, "Preview hunk")
+        -- preview_hunk opens the popup, and focuses it when already open,
+        -- so calling it twice lands the cursor inside on a single press.
+        -- Width and row are recomputed here so the panel follows a resize;
+        -- gitsigns reads preview_config each time it opens the window.
+        map("<leader>hp", function()
+            local cfg = require("gitsigns.config").config.preview_config
+            cfg.row = vim.o.lines - 2
+            cfg.width = vim.o.columns - 2
+            gs.preview_hunk()
+            gs.preview_hunk()
+        end, "Preview hunk")
         map("<leader>hu", gs.reset_hunk, "Undo hunk")
         map("<leader>ha", gs.stage_hunk, "Stage hunk")
         map("<leader>hn", function() gs.nav_hunk("next") end, "Next hunk")
