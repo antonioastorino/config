@@ -442,6 +442,7 @@ setup("gitsigns", {
         end
         map("<leader>hp", gs.preview_hunk_inline, "Preview hunk")
         map("<leader>hu", gs.reset_hunk, "Undo hunk")
+        map("<leader>ha", gs.stage_hunk, "Stage hunk")
         map("<leader>hn", function() gs.nav_hunk("next") end, "Next hunk")
         map("<leader>hN", function() gs.nav_hunk("prev") end, "Previous hunk")
     end,
@@ -464,9 +465,18 @@ vim.opt.wildoptions = ""
 -- the way Vim's "w !cmd > %" could: nothing is written unless it succeeds.
 -- The buffer is filtered in place, which keeps the cursor and one undo step.
 local formatters = {
-    c          = function(f) return { "clang-format", "--style=file:" .. vim.env.HOME .. "/config/.clang-format", "--assume-filename=" .. f } end,
-    python     = function() return { "autopep8", "--aggressive", "--aggressive", "--max-line-length", "100", "-" } end,
+    -- clang-format finds a project .clang-format by walking up from the
+    -- file; only when there is none does the global one in ~/config apply.
+    c = function(f)
+        local cmd = { "clang-format", "--assume-filename=" .. f }
+        if not vim.fs.find(".clang-format", { upward = true, path = vim.fs.dirname(f) })[1] then
+            table.insert(cmd, "--style=file:" .. vim.env.HOME .. "/config/.clang-format")
+        end
+        return cmd
+    end,
+    python     = function() return { "ruff", "format", "--line-length", "140", "--cache-dir", "/tmp/.ruff_cache", "-" } end,
     sh         = function() return { "shfmt", "-i", "4", "-" } end,
+    zsh        = function() return { "shfmt", "-i", "4", "-" } end,
     rust       = function() return { "rustfmt", "--emit", "stdout" } end,
     zig        = function() return { "zig", "fmt", "--stdin" } end,
     swift      = function() return { "swift-format" } end,
