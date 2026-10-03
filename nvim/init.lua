@@ -383,9 +383,10 @@ setup("oil", {
 
 -- In a floating window, so it never occupies a real window: opening a file
 -- closes the float and leaves the layout untouched, and the browser never
--- enters the jumplist. q closes it.
+-- enters the jumplist. q closes it. Opens the working directory, as
+-- :Lexplore does, rather than oil's default of the current file's directory.
 vim.keymap.set("n", "<leader>l", function()
-    require("oil").open_float()
+    require("oil").open_float(vim.fn.getcwd())
 end, { desc = "Browse files" })
 
 -- <bs> goes up a directory, alongside oil's own "-".
@@ -476,8 +477,10 @@ vim.api.nvim_set_hl(0, "GitSignsChange", { fg = "#ffff00", bg = "#008000" })
 vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = "#ff0000", bg = "#ffff00" })
 
 -- File searching (:find, gf). Recursive, so headers resolve without knowing
--- the project layout.
-vim.opt.path:append("**")
+-- the project layout. Only the working directory: the default "." also
+-- searches the current file's directory, so after a :cd elsewhere :find
+-- still turns up files next to whatever buffer is open.
+vim.o.path = "**"
 
 -- Vim completes the command line inline, cycling matches. Nvim defaults to
 -- "pum,tagfile", which dumps every match into a popup instead.
