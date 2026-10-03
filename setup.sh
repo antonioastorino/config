@@ -79,8 +79,11 @@ if command -v nvim >/dev/null; then
         [ -f "$pack/nvim-treesitter/parser/$parser.so" ] || want="$want $parser"
     done
     if [ -n "$want" ]; then
-        nvim --headless -c "TSInstallSync$want" -c 'qa' >/dev/null 2>&1
-        echo "  built$want"
+        # Compiling a parser takes minutes, so let its progress through
+        # rather than looking hung.
+        echo "  building$want"
+        nvim --headless -c "TSInstallSync$want" -c 'qa' 2>&1 | sed 's/^/  /'
+        echo
     else
         echo "  ok    all parsers present"
     fi
