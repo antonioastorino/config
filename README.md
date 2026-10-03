@@ -1,63 +1,52 @@
 # Configuration files
+
 ## Usage
-Install dependencies (see below). Then run
-
 ```bash
-pushd ~
-ln -s config/.vimrc .
-ln -s config/.zshrc .
-mkdir -p .vim/after/syntax
-cp config/c.vim .vim/after/syntax
-popd
+git clone git@github.com:antonioastorino/config.git ~/config
+~/config/setup.sh
 ```
 
-### Neovim
-```bash
-ln -s ~/config/nvim ~/.config/nvim
-```
+`setup.sh` links `.vimrc`, `.zshrc` and `~/.config/nvim` into place, installs
+the Neovim plugins, builds the Treesitter parsers it does not already have,
+and lists any missing tools. It is safe to re-run: existing links are left
+alone and the plugins are fast-forwarded.
 
-Syntax highlighting uses Treesitter. Install the plugin as a native package
-and build the parsers:
+The Vim parts run only when `vim` is installed.
 
-```bash
-mkdir -p ~/.local/share/nvim/site/pack/plugins/start
-git clone --branch master https://github.com/nvim-treesitter/nvim-treesitter.git \
-    ~/.local/share/nvim/site/pack/plugins/start/nvim-treesitter
-nvim -c 'TSInstallSync c cpp bash python typescript javascript tsx json' -c 'qa'
-```
+## Neovim
+Plugins are native packages under
+`~/.local/share/nvim/site/pack/plugins/start`, with no plugin manager:
 
-The remaining plugins install the same way. gitsigns replaces vim-gitgutter
-and oil replaces netrw:
-
-```bash
-cd ~/.local/share/nvim/site/pack/plugins/start
-git clone --depth 1 https://github.com/lewis6991/gitsigns.nvim.git
-git clone --depth 1 https://github.com/stevearc/oil.nvim.git
-```
-
-The `master` branch is the one that supports Neovim 0.10/0.11; `main`
-requires 0.12. Adding a language later is just `:TSInstall <lang>` -- no
-configuration change. Treesitter replaces `c.vim` and `vim-cpp-modern`,
-which are Vim-only.
+- **nvim-treesitter** -- syntax highlighting, replacing `c.vim` and
+  vim-cpp-modern, which are Vim-only. The `master` branch is the one that
+  supports Neovim 0.10/0.11; `main` requires 0.12. Add a language later with
+  `:TSInstall <lang>`; no configuration change is needed.
+- **gitsigns.nvim** -- replaces vim-gitgutter.
+- **oil.nvim** -- replaces netrw.
 
 ## Dependencies
-- clang-format (install using package manager)
-- gitgutter [git repo](https://github.com/airblade/vim-gitgutter)
-- syntax highlighter [git repo](https://github.com/bfrg/vim-cpp-modern)
-- shfmt (use `curl -sS https://webinstall.dev/shfmt | bash` or `sudo apt install shfmt` on Linux)
-- npm (required by `prettier`) 
-- prettier (use `npm install -g prettier`) -- see below how to fix permissions
-- fd (use `brew install fd` or `sudo apt install fd-find`)
+`setup.sh` reports which of these are missing. Install them with `brew
+install` on macOS or `sudo apt install` on Debian.
 
+| Tool | Used for | Note |
+|------|----------|------|
+| `nvim` | the editor | 0.10 or 0.11 |
+| `git` | plugins | |
+| `rg` | `gr`, searching references | `ripgrep` |
+| `fd` | file searching | `fd-find` on Debian |
+| `ctags` | `gd`, tag completion | `universal-ctags` |
+| `clang-format` | formatting C and C++ | |
+| `shfmt` | formatting shell scripts | |
+| `npx` | running `prettier` | from `npm` |
+
+`prettier` itself comes from npm: `npm install -g prettier`.
+
+Tags are only generated in a project containing a `.keep-tags` file.
 
 ### Fix `npm install -g` permission
-```
+```bash
 mkdir -p ~/.npm-global/lib
 npm config set prefix '~/.npm-global'
 ```
-Add `~/.npm-global/bin` to `$PATH`.
-
-#### Resources
-- [Resolving EACCES permission](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally?fileGuid=xxQTRXtVcqtHK6j8)
-
-
+Add `~/.npm-global/bin` to `$PATH`. See
+[resolving EACCES permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally).
