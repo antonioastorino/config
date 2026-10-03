@@ -1,5 +1,7 @@
 setopt histignorealldups
 alias ll="ls -lah"
+alias vim=nvim
+export EDITOR=nvim VISUAL=nvim
 alias ldd="otool -L"
 # Enable autocomplete for git
 autoload -Uz compinit && compinit
