@@ -11,5 +11,7 @@ if [ "`uname`" = "Linux" ] && ! [ "`uname -m`" = "aarch64" ]; then
 fi
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+# Set for Vim on some machines, they would make Neovim load Vim's runtime.
+unset VIM VIMRUNTIME
 export STM32CubeMX_PATH=/Applications/STMicroelectronics/STM32CubeMX.app/Contents/Resources
 

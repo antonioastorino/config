@@ -3,6 +3,10 @@
 # Safe to re-run: existing links are left alone and clones are updated.
 set -euo pipefail
 
+# Neovim reads $VIM and $VIMRUNTIME too: pointing at Vim's runtime, they make
+# it load Vim's files instead of its own and the parser builds fail.
+unset VIM VIMRUNTIME
+
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 pack="$HOME/.local/share/nvim/site/pack/plugins/start"
 parsers="c cpp bash python typescript javascript tsx json"
@@ -84,7 +88,11 @@ if command -v nvim >/dev/null; then
         # when each parser takes minutes to compile.
         for parser in $want; do
             echo "  building $parser"
-            nvim --headless -c "TSInstallSync $parser" -c 'qa' 2>&1 | sed 's/^/    /'
+            # The bang skips the "already available, reinstall?" prompt:
+            # Neovim bundles some parsers (c among them), so TSInstall finds
+            # one on the runtimepath and waits for an answer headless nvim
+            # never reads. Ours are what the plugin's queries are written for.
+            nvim --headless -c "TSInstallSync! $parser" -c 'qa' </dev/null
             echo
         done
     else
