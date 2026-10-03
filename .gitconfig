@@ -9,7 +9,7 @@
 [init]
 	defaultBranch = main
 [diff]
-	tool = vimdiff
+	tool = nvimdiff
 [difftool]
 	prompt = false
 [alias]
@@ -17,6 +17,5 @@
     logp = log --pretty='%h %an %ad %d %s'
 [core]
 	autocrlf = false
-	editor = vim
 [push]
 	autoSetupRemote = true
