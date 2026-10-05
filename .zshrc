@@ -36,3 +36,5 @@ if [ -n "$DYNAMIC_AC6_BIN" ]; then
 fi
 # =================================================
 export PATH="$HOME/.local/bin:$PATH"
+# Set for Vim on some machines, they would make Neovim load Vim's runtime.
+unset VIM VIMRUNTIME
