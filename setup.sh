@@ -104,26 +104,61 @@ fi
 
 echo "Tools"
 case "$(uname -s)" in
-Darwin) hint="brew install" ;;
-*) hint="sudo apt install" ;;
+Darwin) installer="brew install" ;;
+*) installer="sudo apt install -y" ;;
 esac
 
+# The command and the package are not always spelled the same.
+package_for() {
+    case "$1" in
+    nvim) echo neovim ;;
+    rg) echo ripgrep ;;
+    ctags) echo universal-ctags ;;
+    fd) [ "$(uname -s)" = Darwin ] && echo fd || echo fd-find ;;
+    npx) [ "$(uname -s)" = Darwin ] && echo node || echo npm ;;
+    *) echo "$1" ;;
+    esac
+}
+
 missing=""
-for tool in nvim git rg fd ctags clang-format shfmt pipx ruff npx; do
+for tool in nvim git rg fd ctags clang-format shfmt pipx npx; do
     if command -v "$tool" >/dev/null; then
         echo "  ok    $tool"
     else
-        echo "  MISS  $tool"
-        missing="$missing $tool"
+        echo "  miss  $tool"
+        missing="$missing $(package_for "$tool")"
     fi
 done
 
 if [ -n "$missing" ]; then
-    echo
-    echo "Missing:$missing"
-    echo "Install with: $hint <name>"
-    echo "Note: fd is 'fd-find' on Debian, ctags is 'universal-ctags', and"
-    echo "prettier comes from npm (npm install -g prettier)."
-    echo "ruff is a Python package: pipx install ruff. A plain pip install"
-    echo "is refused on Debian and Ubuntu (PEP 668)."
+    echo "  installing:$missing"
+    # Unquoted on purpose: the list is several package names.
+    # shellcheck disable=SC2086
+    $installer $missing
+fi
+
+# Debian installs fd-find as fdfind, so give it the name everything expects.
+if ! command -v fd >/dev/null && command -v fdfind >/dev/null; then
+    mkdir -p "$HOME/.local/bin"
+    ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
+    echo "  link  ~/.local/bin/fd"
+fi
+
+# ruff is a Python package, and Debian and Ubuntu refuse a plain pip install
+# (PEP 668), so it goes through pipx.
+if command -v ruff >/dev/null; then
+    echo "  ok    ruff"
+elif command -v pipx >/dev/null; then
+    echo "  installing ruff"
+    pipx install ruff
+else
+    echo "  miss  ruff, and pipx is not available to install it"
+fi
+
+if npx --no-install prettier --version >/dev/null 2>&1; then
+    echo "  ok    prettier"
+else
+    echo "  installing prettier"
+    npm install -g prettier ||
+        echo "  note  failed; see the README about npm permissions"
 fi

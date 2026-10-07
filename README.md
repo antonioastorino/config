@@ -25,8 +25,8 @@ Plugins are native packages under
 - **oil.nvim** -- replaces netrw.
 
 ## Dependencies
-`setup.sh` reports which of these are missing. Install them with `brew
-install` on macOS or `sudo apt install` on Debian.
+`setup.sh` installs whatever is missing, with `brew` on macOS and `apt` on
+Debian, so it asks for `sudo` there.
 
 | Tool | Used for | Note |
 |------|----------|------|
@@ -41,9 +41,10 @@ install` on macOS or `sudo apt install` on Debian.
 | `ruff` | formatting Python | `pipx install ruff` |
 | `npx` | running `prettier` | from `npm` |
 
-`prettier` itself comes from npm: `npm install -g prettier`. `ruff` is a
-Python package, and Debian and Ubuntu refuse a plain `pip install`
-(PEP 668), so use `pipx install ruff`.
+`ruff` goes through `pipx`, since Debian and Ubuntu refuse a plain
+`pip install` (PEP 668), and `prettier` through `npm install -g`. On Debian
+the `fd-find` package installs the binary as `fdfind`, so `setup.sh` links
+it to `~/.local/bin/fd`.
 
 Tags are only generated in a project containing a `.keep-tags` file.
 
