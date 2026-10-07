@@ -138,6 +138,14 @@ vim.api.nvim_create_autocmd("VimEnter", {
 vim.opt.number = true
 vim.opt.relativenumber = true
 
+-- 'autoread', 'hlsearch', 'ruler' and 'wildmenu' are on by default in nvim,
+-- so only these three are left from .vimrc's options.
+vim.opt.showmatch = true
+vim.opt.scrolloff = 5
+-- Project-local config. Unlike Vim, nvim reads .nvim.lua, .nvimrc or .exrc
+-- rather than a .vimrc, and asks once per file before trusting it.
+vim.opt.exrc = true
+
 -- Splits open below and to the right, as in Vim; nvim puts them above and
 -- to the left.
 vim.opt.splitbelow = true
@@ -195,6 +203,30 @@ end, { expr = true, desc = "Complete or indent" })
 vim.keymap.set("i", "<s-tab>", function()
     return vim.fn.pumvisible() == 1 and "<c-p>" or "<s-tab>"
 end, { expr = true, desc = "Previous completion" })
+
+-- <c-x> toggles comments, as in .vimrc. It defers to nvim's built-in
+-- commenting, which reads 'commentstring' from the filetype, so the
+-- extension table in ToggleComment() is not needed -- and every filetype
+-- works, not just the listed ones. remap is on because gcc and gc are
+-- themselves mappings.
+vim.keymap.set("n", "<c-x>", "gcc", { remap = true, desc = "Toggle comment" })
+vim.keymap.set("x", "<c-x>", "gc", { remap = true, desc = "Toggle comment" })
+vim.keymap.set("i", "<c-x>", "<esc>gcc", { remap = true, desc = "Toggle comment" })
+
+-- Case of the word under the cursor, keeping the cursor where it was.
+vim.keymap.set("n", "cu", "maviwu`a", { desc = "Word to lower case" })
+vim.keymap.set("n", "cU", "maviwU`a", { desc = "Word to upper case" })
+vim.keymap.set("i", "<c-u>", "<esc>gUiw`]a", { desc = "Word to upper case" })
+
+-- Paste the last yank, skipping whatever a delete has since overwritten.
+vim.keymap.set("n", "<leader>p", '"0p', { desc = "Paste the yank register" })
+
+-- Move by underscore, for snake_case names.
+vim.keymap.set("n", "<leader>w", "f_", { desc = "Next underscore" })
+vim.keymap.set("n", "<leader>b", "F_", { desc = "Previous underscore" })
+
+-- Hex dump the buffer.
+vim.keymap.set("n", "<c-b>", "<cmd>%!xxd<cr>", { desc = "To binary" })
 
 -- Leave insert mode with jk; <esc> is disabled so the habit sticks.
 vim.keymap.set("i", "jk", "<esc>")
@@ -272,6 +304,25 @@ vim.keymap.set("n", "gr", function()
     vim.fn.setqflist({}, "r", { title = "rg " .. word, lines = lines })
     vim.cmd("botright copen")
 end, { desc = "References in quickfix" })
+
+-- gf in the quickfix window opens the entry in a split of the window the
+-- search was launched from, rather than replacing the quickfix list.
+vim.api.nvim_create_autocmd("FileType", {
+    group = augroup,
+    pattern = "qf",
+    callback = function(ev)
+        vim.keymap.set("n", "gf", function()
+            local entry = vim.fn.getqflist()[vim.fn.line(".")]
+            if not entry or entry.bufnr == 0 then
+                return
+            end
+            vim.cmd("wincmd p")
+            vim.cmd("split")
+            vim.api.nvim_win_set_buf(0, entry.bufnr)
+            vim.api.nvim_win_set_cursor(0, { math.max(entry.lnum, 1), math.max(entry.col - 1, 0) })
+        end, { buffer = ev.buf, desc = "Open entry in a split" })
+    end,
+})
 
 -- Arrows resize the window instead of moving the cursor.
 vim.keymap.set("n", "<Up>", "<cmd>resize +2<cr>", { desc = "Taller" })
