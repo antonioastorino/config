@@ -172,6 +172,25 @@ for _, click in ipairs({ "<LeftMouse>", "<2-LeftMouse>", "<3-LeftMouse>", "<4-Le
     vim.keymap.set("t", click, "<nop>")
 end
 
+-- <tab> completes, or indents when there is only whitespace behind the
+-- cursor. One source is enough: nvim's default 'complete' is ".,w,b,u,t",
+-- and that t is the tags file, so <c-n> already merges buffer words with the
+-- ctags index -- which is what .vimrc needed TagCompleteFunc() for.
+vim.keymap.set("i", "<tab>", function()
+    if vim.fn.pumvisible() == 1 then
+        return "<c-n>"
+    end
+    local col = vim.fn.col(".") - 1
+    if col == 0 or vim.fn.getline("."):sub(col, col):match("%s") then
+        return "<tab>"
+    end
+    return "<c-n>"
+end, { expr = true, desc = "Complete or indent" })
+
+vim.keymap.set("i", "<s-tab>", function()
+    return vim.fn.pumvisible() == 1 and "<c-p>" or "<s-tab>"
+end, { expr = true, desc = "Previous completion" })
+
 -- Leave insert mode with jk; <esc> is disabled so the habit sticks.
 vim.keymap.set("i", "jk", "<esc>")
 vim.keymap.set("i", "<esc>", "<nop>")
