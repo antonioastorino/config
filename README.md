@@ -37,6 +37,7 @@ install` on macOS or `sudo apt install` on Debian.
 | `ctags` | `gd`, tag completion | `universal-ctags` |
 | `clang-format` | formatting C and C++ | |
 | `shfmt` | formatting shell scripts | |
+| `pipx` | installing `ruff` | |
 | `ruff` | formatting Python | `pipx install ruff` |
 | `npx` | running `prettier` | from `npm` |
 
