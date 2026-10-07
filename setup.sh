@@ -109,7 +109,7 @@ Darwin) hint="brew install" ;;
 esac
 
 missing=""
-for tool in nvim git rg fd ctags clang-format shfmt npx; do
+for tool in nvim git rg fd ctags clang-format shfmt ruff npx; do
     if command -v "$tool" >/dev/null; then
         echo "  ok    $tool"
     else
@@ -124,4 +124,6 @@ if [ -n "$missing" ]; then
     echo "Install with: $hint <name>"
     echo "Note: fd is 'fd-find' on Debian, ctags is 'universal-ctags', and"
     echo "prettier comes from npm (npm install -g prettier)."
+    echo "ruff is a Python package: pipx install ruff. A plain pip install"
+    echo "is refused on Debian and Ubuntu (PEP 668)."
 fi
