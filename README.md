@@ -37,9 +37,12 @@ install` on macOS or `sudo apt install` on Debian.
 | `ctags` | `gd`, tag completion | `universal-ctags` |
 | `clang-format` | formatting C and C++ | |
 | `shfmt` | formatting shell scripts | |
+| `ruff` | formatting Python | `pipx install ruff` |
 | `npx` | running `prettier` | from `npm` |
 
-`prettier` itself comes from npm: `npm install -g prettier`.
+`prettier` itself comes from npm: `npm install -g prettier`. `ruff` is a
+Python package, and Debian and Ubuntu refuse a plain `pip install`
+(PEP 668), so use `pipx install ruff`.
 
 Tags are only generated in a project containing a `.keep-tags` file.
 
