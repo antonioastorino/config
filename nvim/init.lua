@@ -561,6 +561,12 @@ local function format()
     local view = vim.fn.winsaveview()
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split((result.stdout:gsub("\n$", "")), "\n"))
     vim.fn.winrestview(view)
+
+    -- .vimrc wrote the file as part of formatting, so <c-f> also saves.
+    -- Undo still works, it just leaves the buffer modified again.
+    if vim.api.nvim_buf_get_name(buf) ~= "" then
+        vim.cmd("silent write")
+    end
 end
 
 vim.keymap.set("n", "<c-f>", format, { desc = "Format buffer" })
