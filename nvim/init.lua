@@ -138,6 +138,14 @@ vim.api.nvim_create_autocmd("VimEnter", {
 vim.opt.number = true
 vim.opt.relativenumber = true
 
+-- 'autoread', 'hlsearch', 'ruler' and 'wildmenu' are on by default in nvim,
+-- so only these three are left from .vimrc's options.
+vim.opt.showmatch = true
+vim.opt.scrolloff = 5
+-- Project-local config. Unlike Vim, nvim reads .nvim.lua, .nvimrc or .exrc
+-- rather than a .vimrc, and asks once per file before trusting it.
+vim.opt.exrc = true
+
 -- Splits open below and to the right, as in Vim; nvim puts them above and
 -- to the left.
 vim.opt.splitbelow = true
