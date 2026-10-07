@@ -290,6 +290,25 @@ vim.keymap.set("n", "gr", function()
     vim.cmd("botright copen")
 end, { desc = "References in quickfix" })
 
+-- gf in the quickfix window opens the entry in a split of the window the
+-- search was launched from, rather than replacing the quickfix list.
+vim.api.nvim_create_autocmd("FileType", {
+    group = augroup,
+    pattern = "qf",
+    callback = function(ev)
+        vim.keymap.set("n", "gf", function()
+            local entry = vim.fn.getqflist()[vim.fn.line(".")]
+            if not entry or entry.bufnr == 0 then
+                return
+            end
+            vim.cmd("wincmd p")
+            vim.cmd("split")
+            vim.api.nvim_win_set_buf(0, entry.bufnr)
+            vim.api.nvim_win_set_cursor(0, { math.max(entry.lnum, 1), math.max(entry.col - 1, 0) })
+        end, { buffer = ev.buf, desc = "Open entry in a split" })
+    end,
+})
+
 -- Arrows resize the window instead of moving the cursor.
 vim.keymap.set("n", "<Up>", "<cmd>resize +2<cr>", { desc = "Taller" })
 vim.keymap.set("n", "<Down>", "<cmd>resize -2<cr>", { desc = "Shorter" })
