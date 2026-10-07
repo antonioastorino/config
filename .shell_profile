@@ -1,6 +1,8 @@
 setopt histignorealldups
 alias ll="ls -lah"
 alias vim=nvim
+# Free <c-s> for Neovim: the terminal takes it as XOFF and freezes output.
+[ -t 0 ] && stty -ixon
 export EDITOR=nvim VISUAL=nvim
 alias ldd="otool -L"
 # Enable autocomplete for git

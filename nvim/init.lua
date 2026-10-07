@@ -146,6 +146,21 @@ vim.opt.scrolloff = 5
 -- rather than a .vimrc, and asks once per file before trusting it.
 vim.opt.exrc = true
 
+-- Undo history is kept on disk, so it survives closing the file.
+vim.opt.undofile = true
+
+-- Fold by what the parser sees -- functions and blocks -- rather than by
+-- indentation. Start with everything open; za toggles a fold, zR opens all.
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldlevel = 99
+
+-- Flash what was yanked, which shows a wrong motion straight away.
+vim.api.nvim_create_autocmd("TextYankPost", {
+    group = augroup,
+    callback = function() vim.hl.on_yank() end,
+})
+
 -- Splits open below and to the right, as in Vim; nvim puts them above and
 -- to the left.
 vim.opt.splitbelow = true
@@ -212,6 +227,12 @@ end, { expr = true, desc = "Previous completion" })
 vim.keymap.set("n", "<c-x>", "gcc", { remap = true, desc = "Toggle comment" })
 vim.keymap.set("x", "<c-x>", "gc", { remap = true, desc = "Toggle comment" })
 vim.keymap.set("i", "<c-x>", "<esc>gcc", { remap = true, desc = "Toggle comment" })
+
+-- <c-x> was decrement, so it needs somewhere else to live; <c-a> still
+-- increments. Not remapped, so this is the built-in, not the comment
+-- mapping above. The terminal sends <c-s> as XOFF unless the shell profile
+-- runs "stty -ixon", which it does.
+vim.keymap.set({ "n", "x" }, "<c-s>", "<c-x>", { desc = "Decrement" })
 
 -- Case of the word under the cursor, keeping the cursor where it was.
 vim.keymap.set("n", "cu", "maviwu`a", { desc = "Word to lower case" })
