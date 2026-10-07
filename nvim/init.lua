@@ -138,6 +138,11 @@ vim.api.nvim_create_autocmd("VimEnter", {
 vim.opt.number = true
 vim.opt.relativenumber = true
 
+-- Splits open below and to the right, as in Vim; nvim puts them above and
+-- to the left.
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+
 -- Indentation: four spaces, two for the web-ish filetypes.
 vim.opt.autoindent = true
 vim.opt.smartindent = true
