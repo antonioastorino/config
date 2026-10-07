@@ -196,6 +196,15 @@ vim.keymap.set("i", "<s-tab>", function()
     return vim.fn.pumvisible() == 1 and "<c-p>" or "<s-tab>"
 end, { expr = true, desc = "Previous completion" })
 
+-- <c-x> toggles comments, as in .vimrc. It defers to nvim's built-in
+-- commenting, which reads 'commentstring' from the filetype, so the
+-- extension table in ToggleComment() is not needed -- and every filetype
+-- works, not just the listed ones. remap is on because gcc and gc are
+-- themselves mappings.
+vim.keymap.set("n", "<c-x>", "gcc", { remap = true, desc = "Toggle comment" })
+vim.keymap.set("x", "<c-x>", "gc", { remap = true, desc = "Toggle comment" })
+vim.keymap.set("i", "<c-x>", "<esc>gcc", { remap = true, desc = "Toggle comment" })
+
 -- Leave insert mode with jk; <esc> is disabled so the habit sticks.
 vim.keymap.set("i", "jk", "<esc>")
 vim.keymap.set("i", "<esc>", "<nop>")
