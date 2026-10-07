@@ -213,6 +213,21 @@ vim.keymap.set("n", "<c-x>", "gcc", { remap = true, desc = "Toggle comment" })
 vim.keymap.set("x", "<c-x>", "gc", { remap = true, desc = "Toggle comment" })
 vim.keymap.set("i", "<c-x>", "<esc>gcc", { remap = true, desc = "Toggle comment" })
 
+-- Case of the word under the cursor, keeping the cursor where it was.
+vim.keymap.set("n", "cu", "maviwu`a", { desc = "Word to lower case" })
+vim.keymap.set("n", "cU", "maviwU`a", { desc = "Word to upper case" })
+vim.keymap.set("i", "<c-u>", "<esc>gUiw`]a", { desc = "Word to upper case" })
+
+-- Paste the last yank, skipping whatever a delete has since overwritten.
+vim.keymap.set("n", "<leader>p", '"0p', { desc = "Paste the yank register" })
+
+-- Move by underscore, for snake_case names.
+vim.keymap.set("n", "<leader>w", "f_", { desc = "Next underscore" })
+vim.keymap.set("n", "<leader>b", "F_", { desc = "Previous underscore" })
+
+-- Hex dump the buffer.
+vim.keymap.set("n", "<c-b>", "<cmd>%!xxd<cr>", { desc = "To binary" })
+
 -- Leave insert mode with jk; <esc> is disabled so the habit sticks.
 vim.keymap.set("i", "jk", "<esc>")
 vim.keymap.set("i", "<esc>", "<nop>")
