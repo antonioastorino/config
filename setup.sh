@@ -109,7 +109,7 @@ Darwin) hint="brew install" ;;
 esac
 
 missing=""
-for tool in nvim git rg fd ctags clang-format shfmt ruff npx; do
+for tool in nvim git rg fd ctags clang-format shfmt pipx ruff npx; do
     if command -v "$tool" >/dev/null; then
         echo "  ok    $tool"
     else
