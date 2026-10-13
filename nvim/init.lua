@@ -463,13 +463,16 @@ vim.api.nvim_create_autocmd("TermOpen", {
 vim.api.nvim_create_autocmd("TermClose", {
     group = augroup,
     callback = function(ev)
-        if vim.b[ev.buf].toggle_term then
-            vim.schedule(function()
-                if vim.api.nvim_buf_is_valid(ev.buf) then
-                    vim.api.nvim_buf_delete(ev.buf, { force = true })
-                end
-            end)
+        -- Quitting nvim fires TermClose while the buffer is already being
+        -- torn down, and vim.b on a dead buffer throws.
+        if not vim.api.nvim_buf_is_valid(ev.buf) or not vim.b[ev.buf].toggle_term then
+            return
         end
+        vim.schedule(function()
+            if vim.api.nvim_buf_is_valid(ev.buf) then
+                vim.api.nvim_buf_delete(ev.buf, { force = true })
+            end
+        end)
     end,
 })
 
