@@ -134,6 +134,12 @@ vim.api.nvim_create_autocmd("VimEnter", {
     end,
 })
 
+-- Yank to the system clipboard, through xclip. Without this, y only fills
+-- nvim's own register and the terminal's copy shortcut has nothing to take:
+-- nvim owns the mouse, so a drag makes a Visual selection, not a terminal
+-- one. Deletes and changes land there too, since they share the register.
+vim.opt.clipboard = "unnamedplus"
+
 -- Line numbers.
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -447,6 +453,23 @@ vim.api.nvim_create_autocmd("TermOpen", {
             end
         end, { buffer = true, desc = "Open file under cursor" })
         vim.cmd.startinsert()
+    end,
+})
+
+-- The shell exiting leaves a dead buffer that still carries the tag, so
+-- <c-t> would keep reopening "[Process exited N]". Deleting it closes the
+-- window and makes the next <c-t> start a new shell, as :bdelete! did in
+-- .vimrc. Scheduled, because the buffer cannot be deleted from TermClose.
+vim.api.nvim_create_autocmd("TermClose", {
+    group = augroup,
+    callback = function(ev)
+        if vim.b[ev.buf].toggle_term then
+            vim.schedule(function()
+                if vim.api.nvim_buf_is_valid(ev.buf) then
+                    vim.api.nvim_buf_delete(ev.buf, { force = true })
+                end
+            end)
+        end
     end,
 })
 
